@@ -1,5 +1,5 @@
 from fastapi import FastAPI, APIRouter
-
+import os 
 base_router = APIRouter(
     prefix="/api/v1",
     tags=["api_v1"],
@@ -8,6 +8,9 @@ base_router = APIRouter(
 # the default route for health checking;
 @base_router.get("/")
 def read_root():
+    app_version = os.getenv("APP_VERSION")
+    app_name = os.getenv("APP_NAME")
     return{
-        "messege":"server is running"
+        "app name": app_name,
+        "app version": app_version,
     }
