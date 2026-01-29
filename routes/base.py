@@ -7,7 +7,7 @@ base_router = APIRouter(
 
 # the default route for health checking;
 @base_router.get("/")
-def read_root():
+async def read_root():
     app_version = os.getenv("APP_VERSION")
     app_name = os.getenv("APP_NAME")
     return{
