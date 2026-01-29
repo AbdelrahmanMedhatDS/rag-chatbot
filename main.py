@@ -1,9 +1,5 @@
 from fastapi import FastAPI
+from routes.base import base_router
 app = FastAPI()
 
-# the default route; which used in the health check
-@app.get("/")
-def welcome():
-    return{
-        "messege":"server is running"
-    }
+app.include_router(base_router)
