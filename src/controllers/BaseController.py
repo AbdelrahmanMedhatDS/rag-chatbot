@@ -1,3 +1,5 @@
+import random
+import string
 from helpers import Settings, get_settings
 import os
 class BaseController():
@@ -14,4 +16,5 @@ class BaseController():
             "files"
         )
 
-
+    def generate_random_string(self, length: int=12):
+            return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))

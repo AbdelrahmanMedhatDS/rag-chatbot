@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     # file
     FILE_VALIDE_TYPES:List[str]
     FILE_MAX_SIZE:int
+    MAX_CHUNK_SIZE:int
 
 
     model_config = SettingsConfigDict(
