@@ -35,6 +35,15 @@ $ cp .env.example .env
 
 Set your environment variables in the `.env` file. Like `OPENAI_API_KEY` value.
 
+## Run Docker Compose Services
+
+
+```bash
+$ cd docker
+$ sudo docker compose up  -f <file_name> -d
+```
+
+
 ## Run the FastAPI server
 
 **run it inside the src dir.**
