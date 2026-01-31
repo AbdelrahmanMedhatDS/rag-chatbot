@@ -4,7 +4,7 @@ from typing import Optional
 
 
 class ProjectSchema(BaseModel):
-    _id : Optional[ObjectId]
+    id : Optional[ObjectId] = Field(None, alias="_id")
     project_id: str = Field(..., min_length=1)  
 
     # manual validator if the support of Field is not enough ( designed validation )
