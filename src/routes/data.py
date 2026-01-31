@@ -3,13 +3,14 @@ from fastapi.responses import JSONResponse
 from controllers import ProcessController
 from helpers import get_settings, Settings
 from controllers import DataController, ProjectController
-from enums import ResponseSignal
+from enums import ResponseSignal, AssetTypeEnum
 import aiofiles # async file handling lib
 import logging
+import os
 logger = logging.getLogger("UVicorn.errors")
 from schemas import ProcessRequest
-from models import ChunkModel, ProjectModel
-from schemas import ChunkSchema, ProjectSchema
+from models import ChunkModel, ProjectModel, AssetModel
+from schemas import ChunkSchema, ProjectSchema, AssetSchema
 from bson.objectid import ObjectId
 
 data_router = APIRouter(
@@ -62,12 +63,27 @@ async def upload_data(request:Request, project_id:str, file:UploadFile,
                 "signal": ResponseSignal.FILE_UPLOAD_FAILED.value
             }
         )
-        
+
+    asset_model = await AssetModel.create_instance(
+        db_client=db_client
+    )
+
+    asset_resource:AssetSchema = AssetSchema(
+        asset_project_id = project.id,
+        asset_type = AssetTypeEnum.FILE.value,
+        asset_name = file_id,
+        asset_size = os.path.getsize(file_path)
+    )
+    
+    asset_resource = await asset_model.insert_asset_in_db(asset_resource)
+
+
     return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
                 "signal": ResponseSignal.FILE_UPLOAD_SUCCESS.value,
-                "file_id": file_id
+                "file_id": file_id,
+                "asset's refrence": str(asset_resource.asset_name)
             }
         )
 
