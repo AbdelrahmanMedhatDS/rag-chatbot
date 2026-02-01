@@ -50,3 +50,20 @@ $ sudo docker compose up  -f <file_name> -d
 ```bash
 $ uvicorn main:app --reload --host 0.0.0.0 --port 5000
 ```
+
+## References and Official Documentation  
+for the **embedding**, **chat generation** and **others**, refer to the following:
+- [OpenAI Documentation](https://platform.openai.com/docs/)
+- [Cohere Documentation](https://docs.cohere.com/docs)
+- [LangChain Documentation](https://python.langchain.com/docs/)
+- [ollama Documentation](https://ollama.com/docs/)
+- [ngrok Documentation](https://ngrok.com/docs)
+
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [Docker Documentation](https://docs.docker.com/)
+- [Docker Compose Documentation](https://docs.docker.com/compose/)
+
+- [mongodb Documentation](https://www.mongodb.com/docs/)
+- [qdrant Documentation](https://qdrant.tech/documentation/)
+
+- [mini-rag course, by: Abou Bakr Soliman](https://youtube.com/playlist?list=PLvLvlVqNQGHCUR2p0b8a0QpVjDUg50wQj&si=wkmo-cod8i70qj2w)
