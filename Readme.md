@@ -67,3 +67,5 @@ for the **embedding**, **chat generation** and **others**, refer to the followin
 - [qdrant Documentation](https://qdrant.tech/documentation/)
 
 - [mini-rag course, by: Abou Bakr Soliman](https://youtube.com/playlist?list=PLvLvlVqNQGHCUR2p0b8a0QpVjDUg50wQj&si=wkmo-cod8i70qj2w)
+  
+- [What is RAG (Retrieval-Augmented Generation) Guide by Confluent](https://www.confluent.io/learn/retrieval-augmented-generation-rag/)
