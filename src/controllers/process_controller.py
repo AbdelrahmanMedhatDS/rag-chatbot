@@ -8,27 +8,29 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter # type: igno
 
 class ProcessController(BaseController):
 
-    def __init__(self, project_id:str, file_id:str):
+    def __init__(self, project_id:str):
         super().__init__()
         self.project_id= project_id
-        self.file_id= file_id
         self.project_path = ProjectController().get_project_path(project_id=project_id)
 
     
-    def get_file_extension(self):
-        return os.path.splitext(self.file_id)[-1]
+    def get_file_extension(self, file_id:str):
+        return os.path.splitext(file_id)[-1]
 
 
     # 1. Instantiate the loader with the file path
-    def get_file_loader(self):
+    def get_file_loader(self, file_id:str):
 
-        file_ext = self.get_file_extension()
+        file_ext = self.get_file_extension(file_id=file_id)
         
         file_path = os.path.join(
             self.project_path,
-            self.file_id
+            file_id
         )
 
+        if not os.path.exists(file_path):
+            return None
+        
         if file_ext == ProcessingEnum.TXT.value:
             return TextLoader(file_path, encoding="utf-8")
 
@@ -38,9 +40,13 @@ class ProcessController(BaseController):
         return None
     
     # 2. "Load" the data (Fetch -> Parse -> Standardize)
-    def get_file_content(self):
+    def get_file_content(self,file_id:str):
 
-        loader = self.get_file_loader()
+        loader = self.get_file_loader(file_id=file_id)
+       
+        if loader is None:
+            return None
+        
         docs = loader.load()
         return docs # Result: docs is a list of Document objects
     
