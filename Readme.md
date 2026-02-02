@@ -50,6 +50,22 @@ $ sudo docker compose up  -f <file_name> -d
 ```bash
 $ uvicorn main:app --reload --host 0.0.0.0 --port 5000
 ```
+## API Documentation
+
+### Interactive API Documentation (Swagger UI)
+
+Once the server is running, access the interactive API documentation at:
+```
+http://localhost:5000/docs
+```
+You can test the endpoints directly from the Swagger UI.
+
+### Comprehensive API Documentation
+
+For detailed documentation, see the **[API Documentation folder](./src/assets/api_docs/)** 
+
+
+
 
 ## References and Official Documentation  
 for the **embedding**, **chat generation** and **others**, refer to the following:
