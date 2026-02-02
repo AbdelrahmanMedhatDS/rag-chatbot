@@ -23,13 +23,16 @@ class BaseController():
         )
 
     def get_database_path(self, db_name: str):
+        # to prevent classic concurrency bug known as a Race Condition,
+        # specifically a "Time-of-Check to Time-of-Use" (TOCTOU) issue.
+        os.makedirs(self.database_dir_path, exist_ok=True)
+
         database_path = os.path.join(
             self.database_dir_path,
             db_name
         )
 
-        if not os.path.exists(database_path):
-            os.makedirs(database_path)
+        os.makedirs(database_path, exist_ok=True)
 
         return database_path
         
