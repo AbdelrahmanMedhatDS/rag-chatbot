@@ -76,12 +76,20 @@ for the **embedding**, **chat generation** and **others**, refer to the followin
 - [ngrok Documentation](https://ngrok.com/docs)
 
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [uvicorn Documentation](https://www.uvicorn.org/)
+- [gunicorn Documentation](https://gunicorn.org/)
+
 - [Docker Documentation](https://docs.docker.com/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 
 - [mongodb Documentation](https://www.mongodb.com/docs/)
 - [qdrant Documentation](https://qdrant.tech/documentation/)
 
-- [mini-rag course, by: Abou Bakr Soliman](https://youtube.com/playlist?list=PLvLvlVqNQGHCUR2p0b8a0QpVjDUg50wQj&si=wkmo-cod8i70qj2w)
+- [mini-rag course, by: Abu Bakr Soliman](https://youtube.com/playlist?list=PLvLvlVqNQGHCUR2p0b8a0QpVjDUg50wQj&si=wkmo-cod8i70qj2w)
   
 - [What is RAG (Retrieval-Augmented Generation) Guide by Confluent](https://www.confluent.io/learn/retrieval-augmented-generation-rag/)
+
+<!-- - [jinja Documentation](https://jinja.palletsprojects.com/en/3.1.x/) -->
+<!-- 
+- [python-dotenv Documentation](https://saurabh-kumar.com/python-dotenv/)
+- [pydantic Documentation](https://docs.pydantic.dev/latest/) -->
