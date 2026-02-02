@@ -5,6 +5,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from helpers.config import get_settings
 from stores.llm.LLMProviderFactory import LLMProviderFactory
 from stores.vectordb.VectorDBProviderFactory import VectorDBProviderFactory
+from stores.llm.templates import TemplateParser
 # Set up logging
 import logging
 logger = logging.getLogger(__name__)
@@ -28,7 +29,7 @@ async def lifespan(app: FastAPI):
     app.vectordb_client.connect()
     logger.info(f"INFO:     VectorDB client for {settings.VECTOR_DB_BACKEND} initialized")
 
-    # llm 
+    # Transformers' (clients) 
     llm_provider_factory = LLMProviderFactory(settings)
     # llm generation client
     app.generation_client = llm_provider_factory.create(provider=settings.GENERATION_BACKEND)
@@ -42,6 +43,11 @@ async def lifespan(app: FastAPI):
                                              embedding_size=settings.EMBEDDING_MODEL_SIZE)
     logger.info(f"INFO:     LLM embedding client for {settings.EMBEDDING_BACKEND} initialized")
     
+    # template parser
+    app.template_parser = TemplateParser(
+        language=settings.PRIMARY_LANGUAGE,
+        default_language=settings.DEFAULT_LANGUAGE,
+    )
 
     yield # Application runs here
 

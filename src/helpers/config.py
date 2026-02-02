@@ -35,6 +35,12 @@ class Settings(BaseSettings):
     VECTOR_DB_PATH : str
     VECTOR_DB_DISTANCE_METHOD: str = None
 
+    
+    # default system propmt language
+    PRIMARY_LANGUAGE:str = "en"
+    DEFAULT_LANGUAGE:str = "en"
+
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8"

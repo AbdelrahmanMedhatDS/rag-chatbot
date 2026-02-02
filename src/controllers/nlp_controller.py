@@ -64,7 +64,7 @@ class NLPController(BaseController):
 
         return True
 
-    def search_vector_db_collection(self, project: ProjectSchema, text: str, limit: int = 10):
+    def search_vector_db_collection(self, project: ProjectSchema, text: str, limit: int = 5):
 
         # step1: get collection name
         collection_name = self.create_collection_name(project_id=project.project_id)
@@ -87,3 +87,20 @@ class NLPController(BaseController):
             return False
 
         return results
+
+    def answer_rag_question(self, project: ProjectSchema, query: str, limit: int = 5):
+        
+        # step1: retrieve related documents 
+        retrieved_documents = self.search_vector_db_collection(
+            project=project,
+            text=query,
+            limit=limit
+        )
+
+        # validation
+        if not retrieved_documents or len(retrieved_documents) == 0:
+            return None
+        
+        # step2: construct the LLM Prompt 
+        system_prompt = ""
+        pass
