@@ -83,7 +83,7 @@ class NLPController(BaseController):
             limit=limit
         )
 
-        if not results:
+        if not results or len(results) == 0:
             return False
 
         return results

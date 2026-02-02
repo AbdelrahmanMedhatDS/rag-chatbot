@@ -2,6 +2,7 @@ from qdrant_client import models, QdrantClient # type: ignore
 from ..VectorDBInterface import VectorDBInterface
 from ..VectorDBEnums import DistanceMethodEnums
 import logging
+from schemas import RetrievedDocumentSchema
 from typing import List
 
 class QdrantDBProvider(VectorDBInterface):
@@ -127,8 +128,21 @@ class QdrantDBProvider(VectorDBInterface):
         
     def search_by_vector(self, collection_name: str, vector: list, limit: int = 5):
 
-        return self.client.search(
+        results = self.client.search(
             collection_name=collection_name,
             query_vector=vector,
             limit=limit
         )
+
+        if not results or len(results) == 0:
+            self.logger.warning(f"No results found for collection: {collection_name}")
+            return None
+        
+
+        return [
+            RetrievedDocumentSchema(**{
+                "text" : result.payload["text"],
+                "score" : result.score
+            })
+            for result in results
+        ]

@@ -27,3 +27,8 @@ class ChunkSchema(BaseModel):
                 "unique": False
             }
         ]
+    
+
+class RetrievedDocumentSchema(BaseModel):
+    score : float
+    text : str

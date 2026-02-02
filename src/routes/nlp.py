@@ -1,6 +1,6 @@
 from fastapi import FastAPI, APIRouter, status, Request
 from fastapi.responses import JSONResponse
-from schemas import PushRequest, SearchRequest
+from schemas import PushRequest, SearchRequest, RetrievedDocumentSchema
 from models import ProjectModel
 from models import ChunkModel
 from controllers import NLPController
@@ -134,7 +134,7 @@ async def search_index(request: Request, project_id: str, search_request: Search
         embedding_client=request.app.embedding_client,
     )
 
-    results = nlp_controller.search_vector_db_collection(
+    results :RetrievedDocumentSchema = nlp_controller.search_vector_db_collection(
         project=project, text=search_request.text, limit=search_request.limit
     )
 
