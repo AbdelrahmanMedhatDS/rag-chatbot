@@ -119,7 +119,7 @@ class NLPController(BaseController):
                 key="document_prompt",
                 vars={
                     "doc_num": indx + 1, # to start from 1
-                    "chunk_text": doc,
+                    "chunk_text": doc.text,
                 }
             )
 
