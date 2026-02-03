@@ -59,14 +59,15 @@ The system provides a comprehensive set of RESTful endpoints for data management
 
 ![API Endpoints Summary](./src/assets/api_docs/images/API_Endpoints_Summary.png)
 
-### Interactive API Documentation (Swagger UI)
+### Interactive API Documentation (Postman collection & Swagger UI)
 
 Once the server is running, access the interactive API documentation at:
 ```
 http://localhost:5000/docs
 ```
-You can test the endpoints directly from the Swagger UI.
+**You can** test the endpoints **directly from the Swagger UI**.
 
+**you can** also **import** the provided **Postman collection** located at [HERE](./src/assets/api_docs/postman/rag-chatbot.postman_collection.json) **into your Postman application**:
 ### Comprehensive API Documentation
 
 For detailed documentation, see the **[API Documentation folder](./src/assets/api_docs/)** 
@@ -80,9 +81,11 @@ for the **embedding**, **chat generation** and **others**, refer to the followin
 - [Cohere Documentation](https://docs.cohere.com/docs)
 - [Cohere Models Documentation](https://docs.cohere.com/docs/models)
 - [LangChain Documentation](https://python.langchain.com/docs/)
-- [ollama Documentation](https://ollama.com/docs/)
+  
+- [ollama Documentation](https://docs.ollama.com/)
+  [ollama openAI compatibility Documentation](https://docs.ollama.com/api/openai-compatibility)
 - [ngrok Documentation](https://ngrok.com/docs)
-
+- [pyngrok Documentation](https://pyngrok.readthedocs.io/en/latest/)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [uvicorn Documentation](https://www.uvicorn.org/)
 - [gunicorn Documentation](https://gunicorn.org/)

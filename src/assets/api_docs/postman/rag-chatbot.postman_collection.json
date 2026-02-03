@@ -1,0 +1,451 @@
+{
+  "info": {
+    "_postman_id": "ce22c4e3-bd81-425a-894a-9ddec4a86f7a",
+    "name": "rag-chatbot",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51933146",
+    "_collection_link": "https://go.postman.co/collection/51933146-ce22c4e3-bd81-425a-894a-9ddec4a86f7a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "health-checking",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": []
+        },
+        "url": {
+          "raw": "{{api}}/api/v1/",
+          "host": [
+            "{{api}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "file-uploading",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "uuid": "9e6c3d3c-3979-46a9-8d17-5b557720fffe",
+              "src": "/C:/Users/user/Downloads/Epstein_wiki_article - light_Copy.txt"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{api}}/api/v1/data/upload/2",
+          "host": [
+            "{{api}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "data",
+            "upload",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "file-processing",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    // \"file_id\" : \"8spa3ockwe9j_AIBackions.pdf\",\r\n    \"chunk_size\": \"500\",\r\n    \"overlap_size\": \"60\",\r\n    \"do_reset\":1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{api}}/api/v1/data/process/2",
+          "host": [
+            "{{api}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "data",
+            "process",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "nlp_index_push",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"do_reset\":1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{api}}/api/v1/nlp/index/push/2",
+          "host": [
+            "{{api}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "nlp",
+            "index",
+            "push",
+            "2"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "example:nlp_index_push",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"do_reset\":1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api}}/api/v1/nlp/index/push/2",
+              "host": [
+                "{{api}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "nlp",
+                "index",
+                "push",
+                "2"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "date",
+              "value": "Tue, 03 Feb 2026 10:52:00 GMT"
+            },
+            {
+              "key": "server",
+              "value": "uvicorn"
+            },
+            {
+              "key": "content-length",
+              "value": "74"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"signal\": \"inserted_into_vectordb_successfully\",\n    \"inserted_items_count\": 66\n}"
+        }
+      ]
+    },
+    {
+      "name": "nlp_index_info",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{api}}/api/v1/nlp/index/info/2",
+          "host": [
+            "{{api}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "nlp",
+            "index",
+            "info",
+            "2"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "example:nlp_index_info",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api}}/api/v1/nlp/index/info/2",
+              "host": [
+                "{{api}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "nlp",
+                "index",
+                "info",
+                "2"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "date",
+              "value": "Tue, 03 Feb 2026 15:18:44 GMT"
+            },
+            {
+              "key": "server",
+              "value": "uvicorn"
+            },
+            {
+              "key": "content-length",
+              "value": "1005"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"signal\": \"vectordb_collection_retrieved_successfully\",\n    \"collection_info\": {\n        \"status\": \"green\",\n        \"optimizer_status\": \"ok\",\n        \"vectors_count\": null,\n        \"indexed_vectors_count\": 0,\n        \"points_count\": 66,\n        \"segments_count\": 1,\n        \"config\": {\n            \"params\": {\n                \"vectors\": {\n                    \"size\": 384,\n                    \"distance\": \"Cosine\",\n                    \"hnsw_config\": null,\n                    \"quantization_config\": null,\n                    \"on_disk\": null,\n                    \"datatype\": null,\n                    \"multivector_config\": null\n                },\n                \"shard_number\": null,\n                \"sharding_method\": null,\n                \"replication_factor\": null,\n                \"write_consistency_factor\": null,\n                \"read_fan_out_factor\": null,\n                \"on_disk_payload\": null,\n                \"sparse_vectors\": null\n            },\n            \"hnsw_config\": {\n                \"m\": 16,\n                \"ef_construct\": 100,\n                \"full_scan_threshold\": 10000,\n                \"max_indexing_threads\": 0,\n                \"on_disk\": null,\n                \"payload_m\": null\n            },\n            \"optimizer_config\": {\n                \"deleted_threshold\": 0.2,\n                \"vacuum_min_vector_number\": 1000,\n                \"default_segment_number\": 0,\n                \"max_segment_size\": null,\n                \"memmap_threshold\": null,\n                \"indexing_threshold\": 20000,\n                \"flush_interval_sec\": 5,\n                \"max_optimization_threads\": 1\n            },\n            \"wal_config\": {\n                \"wal_capacity_mb\": 32,\n                \"wal_segments_ahead\": 0\n            },\n            \"quantization_config\": null\n        },\n        \"payload_schema\": {}\n    }\n}"
+        }
+      ]
+    },
+    {
+      "name": "nlp_index_search",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"text\": \"من هو جيفري إبستين ؟ ولماذا تم القبض عليه ؟  و متي مات و كيف ؟ \",\r\n    \"limit\":3\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{api}}/api/v1/nlp/index/search/2",
+          "host": [
+            "{{api}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "nlp",
+            "index",
+            "search",
+            "2"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "example:nlp_index_search",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"text\": \"من هو جيفري إبستين ؟ ولماذا تم القبض عليه ؟  و متي مات و كيف ؟ \",\r\n    \"limit\":3\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api}}/api/v1/nlp/index/search/2",
+              "host": [
+                "{{api}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "nlp",
+                "index",
+                "search",
+                "2"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "date",
+              "value": "Tue, 03 Feb 2026 15:18:50 GMT"
+            },
+            {
+              "key": "server",
+              "value": "uvicorn"
+            },
+            {
+              "key": "content-length",
+              "value": "2020"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"signal\": \"vectordb_search_successfully\",\n    \"results\": [\n        {\n            \"score\": 0.6785228376784695,\n            \"text\": \"جيفري إبستين \\n\\nجيفري إبستين ، هو رجل أعمال وملياردير أمريكي وُلد في 20 يناير 1953 في بروكلين، الولايات المتحدة. بدأ مسيرته المهنية في مجال التمويل لدى بنك الاستثمار بير شتيرنز، ثم أسس شركته الخاصة \\\"ج. إبستين وشركاؤه\\\". كان إبستين معروفًا بعلاقاته الواسعة مع عدد من الشخصيات البارزة في الأوساط المالية والسياسية والثقافية\"\n        },\n        {\n            \"score\": 0.6652267575434845,\n            \"text\": \"في 6 يوليو 2019، أُلقي القبض على إبستين مجددًا بتهم اتحادية تتعلق بالاتجار الجنسي بالقاصرين في ولايتي فلوريدا ونيويورك. وفي 10 أغسطس 2019، وُجد ميتًا في زنزانته، وخلص تقرير الطب الشرعي إلى أن الوفاة كانت نتيجة انتحار شنقًا، رغم اعتراض محاميه وانتشار الشكوك العامة حول ملابسات وفاته، مما أدى إلى تداول العديد من نظريات المؤامرة. وبسبب وفاته، أُسقطت جميع التهم الجنائية بحقه في 29 أغسطس 2019.\"\n        },\n        {\n            \"score\": 0.6123549244537025,\n            \"text\": \"القطاع المصرفي\\n\\nالتحق جيفري إبستين بشركة بير ستيرنز في عام 1976 بوظيفة مساعد مبتدئ لتاجر أسهم في قاعة التداول. وسرعان ما ترقّى ليصبح متداولًا في عقود الخيارات، ثم عمل في قسم المنتجات الخاصة، قبل أن ينتقل إلى تقديم المشورة لأثرياء عملاء البنك—ومن بينهم رئيس شركة سيغرام، إدغار برونفمان—حول استراتيجيات تقليل الضرائب.\"\n        }\n    ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "nlp_rag_answer",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    // \"text\": \"من هو جيفري إبستين ؟ ولماذا تم القبض عليه ؟  و متي مات و كيف ؟ \",\r\n    \"text\": \"هل تم القبض علي اخرين؟؟\",\r\n    \"limit\":5,\r\n    \"chat_history\": [\r\n        {\r\n            \"role\": \"system\",\r\n            \"content\": \"You are an assistant to generate a response for the user.\\nYou will be provided by a set of docuemnts associated with the user's query.\\nYou have to generate response in the same language as the user's query.\\nYou have to generate a response based on the documents provided.\\nIgnore the documents that are not relevant to the user's query.\\nYou can applogize to the user if you are not able to generate a response.\\nDo not forget that, You have to generate response in the same language as the user's query.\\nBe polite and respectful to the user.\\nBe precise and concise in your response. Avoid unnecessary information.\\nfocus that You have to generate response in the same language as the user's query.\"\r\n        },\r\n        {\r\n            \"role\": \"user\",\r\n            \"content\": \"## Document Number: 1\\n### Content: جيفري إبستين \\n\\nجيفري إبستين ، هو رجل أعمال وملياردير أمريكي وُلد في 20 يناير 1953 في بروكلين، الولايات المتحدة. بدأ مسيرته المهنية في مجال التمويل لدى بنك الاستثمار بير شتيرنز، ثم أسس شركته الخاصة \\\"ج. إبستين وشركاؤه\\\". كان إبستين معروفًا بعلاقاته الواسعة مع عدد من الشخصيات البارزة في الأوساط المالية والسياسية والثقافية\\n## Document Number: 2\\n### Content: في 6 يوليو 2019، أُلقي القبض على إبستين مجددًا بتهم اتحادية تتعلق بالاتجار الجنسي بالقاصرين في ولايتي فلوريدا ونيويورك. وفي 10 أغسطس 2019، وُجد ميتًا في زنزانته، وخلص تقرير الطب الشرعي إلى أن الوفاة كانت نتيجة انتحار شنقًا، رغم اعتراض محاميه وانتشار الشكوك العامة حول ملابسات وفاته، مما أدى إلى تداول العديد من نظريات المؤامرة. وبسبب وفاته، أُسقطت جميع التهم الجنائية بحقه في 29 أغسطس 2019.\\n## Document Number: 3\\n### Content: القطاع المصرفي\\n\\nالتحق جيفري إبستين بشركة بير ستيرنز في عام 1976 بوظيفة مساعد مبتدئ لتاجر أسهم في قاعة التداول. وسرعان ما ترقّى ليصبح متداولًا في عقود الخيارات، ثم عمل في قسم المنتجات الخاصة، قبل أن ينتقل إلى تقديم المشورة لأثرياء عملاء البنك—ومن بينهم رئيس شركة سيغرام، إدغار برونفمان—حول استراتيجيات تقليل الضرائب.\\n## Document Number: 4\\n### Content: قضى إبستين ما يقرب من ثلاثة عشر شهرًا قبل إطلاق سراحه في 22 يوليو 2009، لمدة عام تحت المراقبة مع الإقامة الجبرية حتى أغسطس 2010. أثناء وجوده تحت المراقبة، سُمح له بالعديد من الرحلات على متن طائرة الشركة الخاصة به إلى مقر إقامته في مانهاتن وجزر فيرجن الأمريكية. سُمح له برحلات تسوق طويلة والمشي حول بالم بيتش \\\"لممارسة الرياضة\\\". بعد جلسة استماع متنازع عليها في يناير 2011، والاستئناف، ظل مسجلاً في ولاية نيويورك باعتباره مرتكب جريمة جنسية من \\\"المستوى الثالث\\\" (خطر كبير لتكرار الجريمة)، وهو تصنيف مدى\\n## Document Number: 5\\n### Content: النشأة\\n\\nوُلد جيفري إبستين في 20 يناير 1953 في حي بروكلين بمدينة نيويورك. كان والداه، بولين \\\"باولا\\\" ستولوفيسكي (1918–2004) وسيمور جورج إبستين (1916–1991)، من أصول يهودية، وتزوّجا في عام 1952، قبل فترة وجيزة من ولادته. عملت والدته باولا كمساعدة في مدرسة وكانت أيضًا ربة منزل. وبحسب صديق طفولة سابق لإبستين، فقد كانت \\\"أماً رائعة وربة منزل متميزة، رغم أنها كانت تعمل بدوام كامل\\\". أما والده سيمور، فكان يعمل بستانيًا ومشرفًا على المساحات الخضراء لدى إدارة الحدائق والترفيه بمدينة نيويورك.\\n\\nBased only on the above documents, please generate an answer for the user.\\n## Here is the User Query that your answer's language must match:\\n\\nمن هو جيفري إبستين ؟ ولماذا تم القبض عليه ؟  و متي مات و كيف ؟ \\n\\n## now what your Answer:\"\r\n        },\r\n        {\r\n            \"role\": \"assistant\",\r\n            \"content\": \"جيفري إبستين رجل أعمال وملياردير أمريكي ، اشتهر بعلاقاته الواسعة في الأوساط المالية والسياسية والثقافية.   تم القبض عليه في عام 2019 بتهمة الاتجار الجنسي بالقاصرين.  توفي في زنزانته في 10 أغسطس 2019،  وخلص تقرير الطب الشرعي إلى أن الوفاة كانت نتيجة انتحار شنقًا. \\n\"\r\n        }\r\n    ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{api}}/api/v1/nlp/index/answer/2",
+          "host": [
+            "{{api}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "nlp",
+            "index",
+            "answer",
+            "2"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "example:nlp_rag_answer",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    // \"text\": \"من هو جيفري إبستين ؟ ولماذا تم القبض عليه ؟  و متي مات و كيف ؟ \",\r\n    \"text\": \"هل تم القبض علي اخرين؟؟\",\r\n    \"limit\":5,\r\n    \"chat_history\": [\r\n        {\r\n            \"role\": \"system\",\r\n            \"content\": \"You are an assistant to generate a response for the user.\\nYou will be provided by a set of docuemnts associated with the user's query.\\nYou have to generate response in the same language as the user's query.\\nYou have to generate a response based on the documents provided.\\nIgnore the documents that are not relevant to the user's query.\\nYou can applogize to the user if you are not able to generate a response.\\nDo not forget that, You have to generate response in the same language as the user's query.\\nBe polite and respectful to the user.\\nBe precise and concise in your response. Avoid unnecessary information.\\nfocus that You have to generate response in the same language as the user's query.\"\r\n        },\r\n        {\r\n            \"role\": \"user\",\r\n            \"content\": \"## Document Number: 1\\n### Content: جيفري إبستين \\n\\nجيفري إبستين ، هو رجل أعمال وملياردير أمريكي وُلد في 20 يناير 1953 في بروكلين، الولايات المتحدة. بدأ مسيرته المهنية في مجال التمويل لدى بنك الاستثمار بير شتيرنز، ثم أسس شركته الخاصة \\\"ج. إبستين وشركاؤه\\\". كان إبستين معروفًا بعلاقاته الواسعة مع عدد من الشخصيات البارزة في الأوساط المالية والسياسية والثقافية\\n## Document Number: 2\\n### Content: في 6 يوليو 2019، أُلقي القبض على إبستين مجددًا بتهم اتحادية تتعلق بالاتجار الجنسي بالقاصرين في ولايتي فلوريدا ونيويورك. وفي 10 أغسطس 2019، وُجد ميتًا في زنزانته، وخلص تقرير الطب الشرعي إلى أن الوفاة كانت نتيجة انتحار شنقًا، رغم اعتراض محاميه وانتشار الشكوك العامة حول ملابسات وفاته، مما أدى إلى تداول العديد من نظريات المؤامرة. وبسبب وفاته، أُسقطت جميع التهم الجنائية بحقه في 29 أغسطس 2019.\\n## Document Number: 3\\n### Content: القطاع المصرفي\\n\\nالتحق جيفري إبستين بشركة بير ستيرنز في عام 1976 بوظيفة مساعد مبتدئ لتاجر أسهم في قاعة التداول. وسرعان ما ترقّى ليصبح متداولًا في عقود الخيارات، ثم عمل في قسم المنتجات الخاصة، قبل أن ينتقل إلى تقديم المشورة لأثرياء عملاء البنك—ومن بينهم رئيس شركة سيغرام، إدغار برونفمان—حول استراتيجيات تقليل الضرائب.\\n## Document Number: 4\\n### Content: قضى إبستين ما يقرب من ثلاثة عشر شهرًا قبل إطلاق سراحه في 22 يوليو 2009، لمدة عام تحت المراقبة مع الإقامة الجبرية حتى أغسطس 2010. أثناء وجوده تحت المراقبة، سُمح له بالعديد من الرحلات على متن طائرة الشركة الخاصة به إلى مقر إقامته في مانهاتن وجزر فيرجن الأمريكية. سُمح له برحلات تسوق طويلة والمشي حول بالم بيتش \\\"لممارسة الرياضة\\\". بعد جلسة استماع متنازع عليها في يناير 2011، والاستئناف، ظل مسجلاً في ولاية نيويورك باعتباره مرتكب جريمة جنسية من \\\"المستوى الثالث\\\" (خطر كبير لتكرار الجريمة)، وهو تصنيف مدى\\n## Document Number: 5\\n### Content: النشأة\\n\\nوُلد جيفري إبستين في 20 يناير 1953 في حي بروكلين بمدينة نيويورك. كان والداه، بولين \\\"باولا\\\" ستولوفيسكي (1918–2004) وسيمور جورج إبستين (1916–1991)، من أصول يهودية، وتزوّجا في عام 1952، قبل فترة وجيزة من ولادته. عملت والدته باولا كمساعدة في مدرسة وكانت أيضًا ربة منزل. وبحسب صديق طفولة سابق لإبستين، فقد كانت \\\"أماً رائعة وربة منزل متميزة، رغم أنها كانت تعمل بدوام كامل\\\". أما والده سيمور، فكان يعمل بستانيًا ومشرفًا على المساحات الخضراء لدى إدارة الحدائق والترفيه بمدينة نيويورك.\\n\\nBased only on the above documents, please generate an answer for the user.\\n## Here is the User Query that your answer's language must match:\\n\\nمن هو جيفري إبستين ؟ ولماذا تم القبض عليه ؟  و متي مات و كيف ؟ \\n\\n## now what your Answer:\"\r\n        },\r\n        {\r\n            \"role\": \"assistant\",\r\n            \"content\": \"جيفري إبستين رجل أعمال وملياردير أمريكي ، اشتهر بعلاقاته الواسعة في الأوساط المالية والسياسية والثقافية.   تم القبض عليه في عام 2019 بتهمة الاتجار الجنسي بالقاصرين.  توفي في زنزانته في 10 أغسطس 2019،  وخلص تقرير الطب الشرعي إلى أن الوفاة كانت نتيجة انتحار شنقًا. \\n\"\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api}}/api/v1/nlp/index/answer/2",
+              "host": [
+                "{{api}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "nlp",
+                "index",
+                "answer",
+                "2"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "date",
+              "value": "Tue, 03 Feb 2026 15:56:47 GMT"
+            },
+            {
+              "key": "server",
+              "value": "uvicorn"
+            },
+            {
+              "key": "content-length",
+              "value": "15148"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"signal\": \"rag_answer_successfully\",\n    \"answer\": \"نعم، تمّ التحقيق مع العديد من الأشخاص الآخرين في قضية جيفري إبستين. \\n\\n\\nمن بينهم وكيل عرض الأزياء جان لوك برونيل وادريانا روس، مساعدة إبستين.  \\n\",\n    \"full_prompt\": \"## Document Number: 1\\n### Content: براون عن رئيس الشرطة آنذاك، ريتر، قوله: «كنّ نحو خمسين فتاة في مقابل رجل واحد—وجميعهن تقريبًا روين القصة ذاتها.» وشملت تفاصيل التحقيق مزاعم بأن ثلاث توائم يبلغن من العمر 12 عامًا جُلبن من فرنسا إلى الولايات المتحدة في عيد ميلاد إبستين، وأُعدن إلى فرنسا في اليوم التالي بعد أن تعرّضن لاعتداء جنسي من قِبل المموّل. كما أشير إلى أن فتيات صغيرات جرى استقدامهن من البرازيل ودول أخرى في أمريكا اللاتينية، ومن الدول السوفيتية السابقة، وأوروبا، وأن وكالة عرض الأزياء «إم سي 2» التي يديرها جان لوك برونيل\\n## Document Number: 2\\n### Content: في أبريل 2005، فتحت شرطة بالم بيتش بولاية فلوريدا تحقيقًا مع إبستين بعد بلاغ من أحد الوالدين حول تحرشه بابنتهما البالغة من العمر 14 عامًا. بعد سلسلة من التحقيقات والإجراءات القضائية، أقر إبستين بالذنب وأُدين في 30 يونيو 2008 بتهمة استدراج قاصر لممارسة الدعارة، وقضى نحو 13 شهرًا في السجن مع السماح له بالخروج للعمل، وذلك ضمن صفقة قضائية. وأكدت التحقيقات الفيدرالية أن هناك 36 ضحية على الأقل، بعضهن لم تتجاوز أعمارهن 14 عامًا.\\n## Document Number: 3\\n### Content: في مايو 2006، قدّمت شرطة بالم بيتش إفادة باحتمال وجود سبب للاتهام تفيد بضرورة توجيه أربع تهم إلى إبستين تتعلق بالاعتداء الجنسي على قاصرين، وتهمة واحدة بالاعتداء الجنسي. وفي 27 يوليو 2006، أُلقي القبض على إبستين من قِبل قسم شرطة بالم بيتش بتهم جنايات على مستوى الولاية، تتضمن استقدام قاصر لغرض الدعارة وطلب خدمات بائعة هوى. وقد جرى تسجيله في سجن مقاطعة بالم بيتش قبل أن يُطلق سراحه بكفالة قدرها 3,000 دولار. لاحقًا، دعا المدّعي العام كريشر إلى اجتماع هيئة محلفين كبرى في مقاطعة بالم بيتش وهي خطوة\\n## Document Number: 4\\n### Content: عقب ذلك، شارك مكتب التحقيقات الفيدرالي في القضية. وبعدها، ادّعت الشرطة أن إبستين دفع لعدد من الفتيات للقيام بأعمال جنسية معه. وأظهرت شهادات خمس ضحايا مزعومات، وسبعة عشر شاهدًا أدلوا بأقوالهم تحت القسم، إضافةً إلى مستندات مدرسية وأدلة أخرى عُثر عليها في قمامة إبستين ومنزله، أن عددًا من الفتيات اللواتي شملتهن القضية كنّ دون سن الثامنة عشرة؛ وكانت أصغرهن في الرابعة عشرة، بينما كانت غالبيتهن دون السادسة عشرة. كشف تفتيش الشرطة لمنزل إبستين عن وجود كاميرتين مخفيتين وأعداد كبيرة من صور الفتيات في\\n## Document Number: 5\\n### Content: عن وجود كاميرتين مخفيتين وأعداد كبيرة من صور الفتيات في أنحاء المنزل، بعضهن كانت الشرطة قد قابلتهن خلال التحقيق. وأفادت التقارير أن أدريانا روس، عارضة الأزياء البولندية السابقة التي أصبحت مساعدة لإبستين، قد أزالت أقراصًا صلبة وغيرها من المعدات الإلكترونية من قصر المموّل في فلوريدا قبل قيام شرطة بالم بيتش بتفتيشه ضمن التحقيق. وتسجّل وثائق المحكمة أن تفتيشًا لمنزل إبستين، أجراه المحقق جوزيف ريكاري من شرطة بالم بيتش عام 2005، كشف عن إيصال من أمازون يتضمن كتبًا عن سادية مازوخية.\\n\\nBased only on the above documents, please generate an answer for the user.\\n## Here is the User Query that your answer's language must match:\\n\\nهل تم القبض علي اخرين؟؟\\n\\n## now what your Answer:\",\n    \"chat_history\": [\n        {\n            \"role\": \"system\",\n            \"content\": \"You are an assistant to generate a response for the user.\\nYou will be provided by a set of docuemnts associated with the user's query.\\nYou have to generate response in the same language as the user's query.\\nYou have to generate a response based on the documents provided.\\nIgnore the documents that are not relevant to the user's query.\\nYou can applogize to the user if you are not able to generate a response.\\nDo not forget that, You have to generate response in the same language as the user's query.\\nBe polite and respectful to the user.\\nBe precise and concise in your response. Avoid unnecessary information.\\nfocus that You have to generate response in the same language as the user's query.\"\n        },\n        {\n            \"role\": \"user\",\n            \"content\": \"## Document Number: 1\\n### Content: جيفري إبستين \\n\\nجيفري إبستين ، هو رجل أعمال وملياردير أمريكي وُلد في 20 يناير 1953 في بروكلين، الولايات المتحدة. بدأ مسيرته المهنية في مجال التمويل لدى بنك الاستثمار بير شتيرنز، ثم أسس شركته الخاصة \\\"ج. إبستين وشركاؤه\\\". كان إبستين معروفًا بعلاقاته الواسعة مع عدد من الشخصيات البارزة في الأوساط المالية والسياسية والثقافية\\n## Document Number: 2\\n### Content: في 6 يوليو 2019، أُلقي القبض على إبستين مجددًا بتهم اتحادية تتعلق بالاتجار الجنسي بالقاصرين في ولايتي فلوريدا ونيويورك. وفي 10 أغسطس 2019، وُجد ميتًا في زنزانته، وخلص تقرير الطب الشرعي إلى أن الوفاة كانت نتيجة انتحار شنقًا، رغم اعتراض محاميه وانتشار الشكوك العامة حول ملابسات وفاته، مما أدى إلى تداول العديد من نظريات المؤامرة. وبسبب وفاته، أُسقطت جميع التهم الجنائية بحقه في 29 أغسطس 2019.\\n## Document Number: 3\\n### Content: القطاع المصرفي\\n\\nالتحق جيفري إبستين بشركة بير ستيرنز في عام 1976 بوظيفة مساعد مبتدئ لتاجر أسهم في قاعة التداول. وسرعان ما ترقّى ليصبح متداولًا في عقود الخيارات، ثم عمل في قسم المنتجات الخاصة، قبل أن ينتقل إلى تقديم المشورة لأثرياء عملاء البنك—ومن بينهم رئيس شركة سيغرام، إدغار برونفمان—حول استراتيجيات تقليل الضرائب.\\n## Document Number: 4\\n### Content: قضى إبستين ما يقرب من ثلاثة عشر شهرًا قبل إطلاق سراحه في 22 يوليو 2009، لمدة عام تحت المراقبة مع الإقامة الجبرية حتى أغسطس 2010. أثناء وجوده تحت المراقبة، سُمح له بالعديد من الرحلات على متن طائرة الشركة الخاصة به إلى مقر إقامته في مانهاتن وجزر فيرجن الأمريكية. سُمح له برحلات تسوق طويلة والمشي حول بالم بيتش \\\"لممارسة الرياضة\\\". بعد جلسة استماع متنازع عليها في يناير 2011، والاستئناف، ظل مسجلاً في ولاية نيويورك باعتباره مرتكب جريمة جنسية من \\\"المستوى الثالث\\\" (خطر كبير لتكرار الجريمة)، وهو تصنيف مدى\\n## Document Number: 5\\n### Content: النشأة\\n\\nوُلد جيفري إبستين في 20 يناير 1953 في حي بروكلين بمدينة نيويورك. كان والداه، بولين \\\"باولا\\\" ستولوفيسكي (1918–2004) وسيمور جورج إبستين (1916–1991)، من أصول يهودية، وتزوّجا في عام 1952، قبل فترة وجيزة من ولادته. عملت والدته باولا كمساعدة في مدرسة وكانت أيضًا ربة منزل. وبحسب صديق طفولة سابق لإبستين، فقد كانت \\\"أماً رائعة وربة منزل متميزة، رغم أنها كانت تعمل بدوام كامل\\\". أما والده سيمور، فكان يعمل بستانيًا ومشرفًا على المساحات الخضراء لدى إدارة الحدائق والترفيه بمدينة نيويورك.\\n\\nBased only on the above documents, please generate an answer for the user.\\n## Here is the User Query that your answer's language must match:\\n\\nمن هو جيفري إبستين ؟ ولماذا تم القبض عليه ؟  و متي مات و كيف ؟ \\n\\n## now what your Answer:\"\n        },\n        {\n            \"role\": \"assistant\",\n            \"content\": \"جيفري إبستين رجل أعمال وملياردير أمريكي ، اشتهر بعلاقاته الواسعة في الأوساط المالية والسياسية والثقافية.   تم القبض عليه في عام 2019 بتهمة الاتجار الجنسي بالقاصرين.  توفي في زنزانته في 10 أغسطس 2019،  وخلص تقرير الطب الشرعي إلى أن الوفاة كانت نتيجة انتحار شنقًا. \\n\"\n        },\n        {\n            \"role\": \"user\",\n            \"content\": \"## Document Number: 1\\n### Content: براون عن رئيس الشرطة آنذاك، ريتر، قوله: «كنّ نحو خمسين فتاة في مقابل رجل واحد—وجميعهن تقريبًا روين القصة ذاتها.» وشملت تفاصيل التحقيق مزاعم بأن ثلاث توائم يبلغن من العمر 12 عامًا جُلبن من فرنسا إلى الولايات المتحدة في عيد ميلاد إبستين، وأُعدن إلى فرنسا في اليوم التالي بعد أن تعرّضن لاعتداء جنسي من قِبل المموّل. كما أشير إلى أن فتيات صغيرات جرى استقدامهن من البرازيل ودول أخرى في أمريكا اللاتينية، ومن الدول السوفيتية السابقة، وأوروبا، وأن وكالة عرض الأزياء «إم سي 2» التي يديرها جان لوك برونيل\\n## Document Number: 2\\n### Content: في أبريل 2005، فتحت شرطة بالم بيتش بولاية فلوريدا تحقيقًا مع إبستين بعد بلاغ من أحد الوالدين حول تحرشه بابنتهما البالغة من العمر 14 عامًا. بعد سلسلة من التحقيقات والإجراءات القضائية، أقر إبستين بالذنب وأُدين في 30 يونيو 2008 بتهمة استدراج قاصر لممارسة الدعارة، وقضى نحو 13 شهرًا في السجن مع السماح له بالخروج للعمل، وذلك ضمن صفقة قضائية. وأكدت التحقيقات الفيدرالية أن هناك 36 ضحية على الأقل، بعضهن لم تتجاوز أعمارهن 14 عامًا.\\n## Document Number: 3\\n### Content: في مايو 2006، قدّمت شرطة بالم بيتش إفادة باحتمال وجود سبب للاتهام تفيد بضرورة توجيه أربع تهم إلى إبستين تتعلق بالاعتداء الجنسي على قاصرين، وتهمة واحدة بالاعتداء الجنسي. وفي 27 يوليو 2006، أُلقي القبض على إبستين من قِبل قسم شرطة بالم بيتش بتهم جنايات على مستوى الولاية، تتضمن استقدام قاصر لغرض الدعارة وطلب خدمات بائعة هوى. وقد جرى تسجيله في سجن مقاطعة بالم بيتش قبل أن يُطلق سراحه بكفالة قدرها 3,000 دولار. لاحقًا، دعا المدّعي العام كريشر إلى اجتماع هيئة محلفين كبرى في مقاطعة بالم بيتش وهي خطوة\\n## Document Number: 4\\n### Content: عقب ذلك، شارك مكتب التحقيقات الفيدرالي في القضية. وبعدها، ادّعت الشرطة أن إبستين دفع لعدد من الفتيات للقيام بأعمال جنسية معه. وأظهرت شهادات خمس ضحايا مزعومات، وسبعة عشر شاهدًا أدلوا بأقوالهم تحت القسم، إضافةً إلى مستندات مدرسية وأدلة أخرى عُثر عليها في قمامة إبستين ومنزله، أن عددًا من الفتيات اللواتي شملتهن القضية كنّ دون سن الثامنة عشرة؛ وكانت أصغرهن في الرابعة عشرة، بينما كانت غالبيتهن دون السادسة عشرة. كشف تفتيش الشرطة لمنزل إبستين عن وجود كاميرتين مخفيتين وأعداد كبيرة من صور الفتيات في\\n## Document Number: 5\\n### Content: عن وجود كاميرتين مخفيتين وأعداد كبيرة من صور الفتيات في أنحاء المنزل، بعضهن كانت الشرطة قد قابلتهن خلال التحقيق. وأفادت التقارير أن أدريانا روس، عارضة الأزياء البولندية السابقة التي أصبحت مساعدة لإبستين، قد أزالت أقراصًا صلبة وغيرها من المعدات الإلكترونية من قصر المموّل في فلوريدا قبل قيام شرطة بالم بيتش بتفتيشه ضمن التحقيق. وتسجّل وثائق المحكمة أن تفتيشًا لمنزل إبستين، أجراه المحقق جوزيف ريكاري من شرطة بالم بيتش عام 2005، كشف عن إيصال من أمازون يتضمن كتبًا عن سادية مازوخية.\\n\\nBased only on the above documents, please generate an answer for the user.\\n## Here is the User Query that your answer's language must match:\\n\\nهل تم القبض علي اخرين؟؟\\n\\n## now what your Answer:\"\n        }\n    ]\n}"
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "api",
+      "value": ""
+    }
+  ]
+}
