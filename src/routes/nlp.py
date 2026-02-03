@@ -178,7 +178,8 @@ async def search_index(request: Request, project_id: str, search_request: Search
     answer, full_prompt, chat_history = nlp_controller.answer_rag_question(
         project=project,
         query= search_request.text,
-        limit= search_request.limit
+        limit= search_request.limit,
+        chat_history=search_request.chat_history  # Pass the chat_history from client
     )
 
     if not answer:

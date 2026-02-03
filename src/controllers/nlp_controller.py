@@ -89,9 +89,9 @@ class NLPController(BaseController):
 
         return results
 
-    def answer_rag_question(self, project: ProjectSchema, query: str, limit: int = 5):
+    def answer_rag_question(self, project: ProjectSchema, query: str, limit: int = 5, chat_history: list = None):
         
-        answer, full_prompt, chat_history = None, None, None
+        answer, full_prompt, final_chat_history = None, None, None
 
         # step1: retrieve related documents 
         retrieved_documents = self.search_vector_db_collection(
@@ -102,7 +102,7 @@ class NLPController(BaseController):
 
         # validation
         if not retrieved_documents or len(retrieved_documents) == 0:
-            return answer, full_prompt, chat_history
+            return answer, full_prompt, final_chat_history
         
         # step2: construct the LLM Prompt 
         system_prompt = self.template_parser.get(
@@ -130,19 +130,24 @@ class NLPController(BaseController):
 
         
         # step3: Construct Generation Client Prompts
-        chat_history = [
-            self.generation_client.construct_prompt(
-                prompt=system_prompt,
-                role=self.generation_client.enums.SYSTEM.value,
-            )
-        ]
+        # Use provided chat_history or create new one with system prompt
+        if chat_history is None or len(chat_history) == 0:
+            final_chat_history = [
+                self.generation_client.construct_prompt(
+                    prompt=system_prompt,
+                    role=self.generation_client.enums.SYSTEM.value,
+                )
+            ]
+        else:
+            # Use the chat history provided by the client
+            final_chat_history = chat_history
 
         full_prompt = "\n\n".join([documents_prompt, footer_prompt])
 
         # step4: Retrieve the Answer
         answer = self.generation_client.generate_text(
             prompt=full_prompt,
-            chat_history=chat_history
+            chat_history=final_chat_history
         )
 
-        return answer, full_prompt, chat_history
+        return answer, full_prompt, final_chat_history
