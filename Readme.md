@@ -1,6 +1,7 @@
-## rag-chatbot
+## RAG Chatbot
 
-this is a RAG model implemented to be integrated as a legal chatbot assistant 'service' in a Lawyer Booking system 
+This is a RAG (Retrieval-Augmented Generation) model implemented to be integrated as a legal chatbot assistant service in a Lawyer Booking system.
+
 
 ## Requirements
 
@@ -52,6 +53,12 @@ $ uvicorn main:app --reload --host 0.0.0.0 --port 5000
 ```
 ## API Documentation
 
+### API Endpoints Overview
+
+The system provides a comprehensive set of RESTful endpoints for data management, processing, and NLP operations:
+
+![API Endpoints Summary](./src/assets/api_docs/images/API_Endpoints_Summary.png)
+
 ### Interactive API Documentation (Swagger UI)
 
 Once the server is running, access the interactive API documentation at:
@@ -64,13 +71,14 @@ You can test the endpoints directly from the Swagger UI.
 
 For detailed documentation, see the **[API Documentation folder](./src/assets/api_docs/)** 
 
-
+For detailed workflow diagrams, see that **[image](./src/assets/api_docs/images/MongoDB_Qdrant.png)** as well
 
 
 ## References and Official Documentation  
 for the **embedding**, **chat generation** and **others**, refer to the following:
 - [OpenAI Documentation](https://platform.openai.com/docs/)
 - [Cohere Documentation](https://docs.cohere.com/docs)
+- [Cohere Models Documentation](https://docs.cohere.com/docs/models)
 - [LangChain Documentation](https://python.langchain.com/docs/)
 - [ollama Documentation](https://ollama.com/docs/)
 - [ngrok Documentation](https://ngrok.com/docs)

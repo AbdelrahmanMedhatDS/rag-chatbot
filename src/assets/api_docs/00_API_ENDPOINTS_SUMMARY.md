@@ -20,6 +20,9 @@
 
 ## Quick Reference
 
+[check that illustrated image](./images/API_Endpoints_Summary.png)
+
+
 | Endpoint | Method | Purpose | Auth Required |
 |----------|--------|---------|---------------|
 | `/` | GET | Health check | No |
@@ -28,6 +31,7 @@
 | `/nlp/index/push/{project_id}` | POST | Create vector embeddings | No |
 | `/nlp/index/info/{project_id}` | GET | Get collection statistics | No |
 | `/nlp/index/search/{project_id}` | POST | Semantic search | No |
+
 
 ---
 
