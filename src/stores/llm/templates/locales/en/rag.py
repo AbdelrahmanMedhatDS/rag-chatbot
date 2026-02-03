@@ -14,7 +14,7 @@ system_prompt = Template("\n".join([
     "Do not forget that, You have to generate response in the same language as the user's query.", ## language consistency
     "Be polite and respectful to the user.",
     "Be precise and concise in your response. Avoid unnecessary information.",
-    "You have to generate response in the same language as the user's query.", ## language consistency
+    "focus that You have to generate response in the same language as the user's query.", ## language consistency
 ]))
 
 #### Document ####
@@ -28,5 +28,9 @@ document_prompt = Template(
 #### Footer ####
 footer_prompt = Template("\n".join([
     "Based only on the above documents, please generate an answer for the user.",
+    "## Here is the User Query:",
+    "",
+    "$query",
+    "",
     "## Answer:",
 ]))
