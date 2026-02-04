@@ -1,6 +1,6 @@
 ## RAG Chatbot
 
-This is a RAG (Retrieval-Augmented Generation) model implemented to be integrated as a legal chatbot assistant service in a Lawyer Booking system.
+This is a [RAG (Retrieval-Augmented Generation)](./src/assets/api_docs/images/sequential_flow.png) model implemented to be integrated as a legal chatbot assistant service in a Lawyer Booking system.
 
 
 ## Requirements
