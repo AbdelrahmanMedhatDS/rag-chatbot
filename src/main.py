@@ -1,7 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI # type: ignore
 from routes import base_router, data_router, nlp_router 
 from contextlib import asynccontextmanager
-from motor.motor_asyncio import AsyncIOMotorClient
+from motor.motor_asyncio import AsyncIOMotorClient # type: ignore
 from helpers.config import get_settings
 from stores.llm.LLMProviderFactory import LLMProviderFactory
 from stores.vectordb.VectorDBProviderFactory import VectorDBProviderFactory
@@ -10,6 +10,9 @@ from stores.llm.templates import TemplateParser
 import logging
 logger = logging.getLogger(__name__)
 settings = get_settings()
+
+# Set up Prometheus metrics
+from utils import setup_metrics
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -59,6 +62,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan= lifespan, title="Legal RAG Chatbot API")
+
+setup_metrics(app) # Set up Prometheus metrics and endpoint
 
 app.include_router(base_router)
 app.include_router(data_router)
