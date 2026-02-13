@@ -8,12 +8,15 @@ services:
       - "27010:27017"
     
     volumes:
-      - "./mongodb:/data/db"
+      - "rag_mongo_db:/data/db"
     
     networks:
       - backend
     
     restart: always
+
+volumes:
+  rag_mongo_db:
 
 
 networks:
