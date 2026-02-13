@@ -1,6 +1,6 @@
 ## RAG Chatbot
 
-This is a [RAG (Retrieval-Augmented Generation)](./src/assets/api_docs/images/sequential_flow.png) model implemented to be integrated as a legal chatbot assistant service in a Lawyer Booking system.
+This is a [RAG (Retrieval-Augmented Generation)](./docs/images/sequential_flow.png) model implemented to be integrated as a legal chatbot assistant service in a Lawyer Booking system.
 
 
 ## Requirements
@@ -57,7 +57,7 @@ $ uvicorn main:app --reload --host 0.0.0.0 --port 5000
 
 The system provides a comprehensive set of RESTful endpoints for data management, processing, and NLP operations:
 
-![API Endpoints Summary](./src/assets/api_docs/images/API_Endpoints_Summary.png)
+![API Endpoints Summary](./docs/images/API_Endpoints_Summary.png)
 
 ### Interactive API Documentation (Postman collection & Swagger UI)
 
@@ -67,12 +67,12 @@ http://localhost:5000/docs
 ```
 **You can** test the endpoints **directly from the Swagger UI**.
 
-**you can** also **import** the provided **Postman collection** located at [HERE](./src/assets/api_docs/postman/rag-chatbot.postman_collection.json) **into your Postman application**:
+**you can** also **import** the provided **Postman collection** located at [HERE](./docs/postman/rag-chatbot.postman_collection.json) **into your Postman application**:
 ### Comprehensive API Documentation
 
-For detailed documentation, see the **[API Documentation folder](./src/assets/api_docs/)** 
+For detailed documentation, see the **[API Documentation folder](./docs/api_docs/)** 
 
-For detailed workflow diagrams, see that **[image](./src/assets/api_docs/images/MongoDB_Qdrant.png)** as well
+For detailed workflow diagrams, see that **[image](./docs/images/MongoDB_Qdrant.png)** as well
 
 
 ## References and Official Documentation  
@@ -83,7 +83,7 @@ for the **embedding**, **chat generation** and **others**, refer to the followin
 - [LangChain Documentation](https://python.langchain.com/docs/)
   
 - [ollama Documentation](https://docs.ollama.com/)
-  [ollama openAI compatibility Documentation](https://docs.ollama.com/api/openai-compatibility)
+- [ollama openAI compatibility Documentation](https://docs.ollama.com/api/openai-compatibility)
 - [ngrok Documentation](https://ngrok.com/docs)
 - [pyngrok Documentation](https://pyngrok.readthedocs.io/en/latest/)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
@@ -104,3 +104,9 @@ for the **embedding**, **chat generation** and **others**, refer to the followin
 <!-- 
 - [python-dotenv Documentation](https://saurabh-kumar.com/python-dotenv/)
 - [pydantic Documentation](https://docs.pydantic.dev/latest/) -->
+  
+- [prometheus Documentation](https://prometheus.io/docs/introduction/overview/)
+- [nginx Documentation](https://nginx.org/en/docs/)
+- [uv package manager github](https://github.com/astral-sh/uv)
+- [grafana Documentation](https://grafana.com/docs/grafana/latest/)
+
