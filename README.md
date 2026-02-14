@@ -5,18 +5,24 @@ This is a [RAG (Retrieval-Augmented Generation)](./docs/images/sequential_flow.p
 
 ## Requirements
 
-- Python 3.8 or later
+- Python 3.11 or later
 
 #### Install Python using MiniConda
 
 1) Download and install MiniConda from [here](https://docs.anaconda.com/free/miniconda/#quick-command-line-install)
 2) Create a new environment using the following command:
 ```bash
-$ conda create -n rag python=3.8
+$ conda create -n rag python=3.11
 ```
 3) Activate the environment:
 ```bash
 $ conda activate rag
+```
+
+### (Optional) Setup you command line interface for better readability
+
+```bash
+export PS1="\[\033[01;32m\]\u@\h:\w\n\[\033[00m\]\$ "
 ```
 
 
