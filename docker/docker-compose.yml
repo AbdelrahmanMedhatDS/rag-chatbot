@@ -9,6 +9,8 @@ services:
       - "5000:8000"
     networks:
       - backend
+    volumes:
+      - fastapi_data:/app/assets
     restart: always
     depends_on:
       mongodb:
