@@ -20,10 +20,16 @@ async def read_root(request:Request, app_settings: Settings =Depends(get_setting
 
     
     mongo_db_health_check = ""
-    if request.app.db_client is None:
-        mongo_db_health_check = "MongoDB connection failed"
-    else:
-        mongo_db_health_check = "MongoDB connection successful"
+    try:
+        if request.app.db_client is None:
+            mongo_db_health_check = "MongoDB connection failed: Client is None"
+        else:
+            # Run command directly on the database object
+            await request.app.db_client.command('ping')
+            mongo_db_health_check = "MongoDB connection successful"
+            
+    except Exception as e:
+        mongo_db_health_check = f"MongoDB connection failed: {str(e)}"
 
     app_version = app_settings.APP_VERSION
     app_name = app_settings.APP_NAME
