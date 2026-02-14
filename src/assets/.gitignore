@@ -1,2 +1,13 @@
-files
-database/
+files/*
+!files/1/
+!files/2/
+
+database/*
+!database/qdrant_db/
+database/qdrant_db/*
+!database/qdrant_db/.lock
+!database/qdrant_db/meta.json
+!database/qdrant_db/collection/
+database/qdrant_db/collection/*
+!database/qdrant_db/collection/collection_1/
+!database/qdrant_db/collection/collection_2/
