@@ -2,6 +2,7 @@ from qdrant_client import models, QdrantClient # type: ignore
 from ..VectorDBInterface import VectorDBInterface
 from ..VectorDBEnums import DistanceMethodEnums
 import logging
+import asyncio
 from schemas import RetrievedDocumentSchema
 from typing import List
 
@@ -146,3 +147,72 @@ class QdrantDBProvider(VectorDBInterface):
             })
             for result in results
         ]
+
+    def search_by_vector_multi_collection(self, collection_names: List[str], vector: list, limit: int = 5):
+        if not collection_names or len(collection_names) == 0:
+            return None
+
+        all_results: List[RetrievedDocumentSchema] = []
+
+        for collection_name in collection_names:
+            if not self.is_collection_existed(collection_name=collection_name):
+                self.logger.warning(f"Collection not found: {collection_name}")
+                continue
+
+            collection_results = self.search_by_vector(
+                collection_name=collection_name,
+                vector=vector,
+                limit=limit
+            )
+
+            if collection_results:
+                all_results.extend(collection_results)
+
+        if len(all_results) == 0:
+            return None
+
+        all_results.sort(key=lambda item: item.score, reverse=True)
+        return all_results[:limit]
+
+    async def search_by_vector_async(self, collection_name: str, vector: list, limit: int = 5):
+        return await asyncio.to_thread(
+            self.search_by_vector,
+            collection_name,
+            vector,
+            limit
+        )
+
+    async def search_by_vector_multi_collection_async(self, collection_names: List[str], vector: list, limit: int = 5):
+        if not collection_names or len(collection_names) == 0:
+            return None
+
+        tasks = []
+
+        for collection_name in collection_names:
+            if not self.is_collection_existed(collection_name=collection_name):
+                self.logger.warning(f"Collection not found: {collection_name}")
+                continue
+
+            tasks.append(
+                self.search_by_vector_async(
+                    collection_name=collection_name,
+                    vector=vector,
+                    limit=limit
+                )
+            )
+
+        if len(tasks) == 0:
+            return None
+
+        results = await asyncio.gather(*tasks)
+
+        all_results: List[RetrievedDocumentSchema] = []
+        for collection_results in results:
+            if collection_results:
+                all_results.extend(collection_results)
+
+        if len(all_results) == 0:
+            return None
+
+        all_results.sort(key=lambda item: item.score, reverse=True)
+        return all_results[:limit]

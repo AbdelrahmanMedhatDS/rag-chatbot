@@ -5,6 +5,7 @@ from models import ProjectModel
 from models import ChunkModel
 from controllers import NLPController
 from enums import ResponseSignal
+from helpers.collections import is_reserved_project_id, allow_reserved_writes, get_system_reserved_project_ids
 
 import logging
 
@@ -17,6 +18,21 @@ nlp_router = APIRouter(
 
 @nlp_router.post("/index/push/{project_id}")
 async def index_project(request: Request, project_id: str, push_request: PushRequest):
+
+    if is_reserved_project_id(project_id):
+        if allow_reserved_writes():
+            logger.warning(f"Reserved project_id write allowed on index push: {project_id}")
+        else:
+            return JSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={
+                    "signal": ResponseSignal.PROJECT_ID_RESERVED.value,
+                    "details": {
+                        "message": "project_id is reserved for system collections",
+                        "reserved_project_ids": get_system_reserved_project_ids()
+                    }
+                }
+            )
 
     project_model = await ProjectModel.create_instance(
         db_client=request.app.db_client
@@ -137,7 +153,7 @@ async def search_index(request: Request, project_id: str, search_request: Search
         template_parser=request.app.template_parser
     )
 
-    results :RetrievedDocumentSchema = nlp_controller.search_vector_db_collection(
+    results :RetrievedDocumentSchema = await nlp_controller.search_vector_db_collection(
         project=project, text=search_request.text, limit=search_request.limit
     )
 
@@ -175,7 +191,7 @@ async def search_index(request: Request, project_id: str, search_request: Search
         template_parser=request.app.template_parser
     )
 
-    answer, full_prompt, chat_history = nlp_controller.answer_rag_question(
+    answer, full_prompt, chat_history = await nlp_controller.answer_rag_question(
         project=project,
         query= search_request.text,
         limit= search_request.limit,

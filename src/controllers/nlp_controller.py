@@ -2,6 +2,7 @@ from stores.llm.templates.template_parser import TemplateParser
 from .base_controller import BaseController
 from schemas import ProjectSchema, ChunkSchema
 from stores.llm.LLMEnums import DocumentTypeEnum
+from helpers.collections import build_collection_name, get_system_collection_names
 from typing import List
 import json
 
@@ -17,7 +18,12 @@ class NLPController(BaseController):
         self.template_parser = template_parser
 
     def create_collection_name(self, project_id: str):
-        return f"collection_{project_id}".strip()
+        return build_collection_name(project_id=project_id)
+
+    def get_search_collection_names(self, project_id: str) -> List[str]:
+        system_collections = get_system_collection_names()
+        user_collection = self.create_collection_name(project_id=project_id)
+        return list(dict.fromkeys(system_collections + [user_collection]))
     
     def reset_vector_db_collection(self, project: ProjectSchema):
         collection_name = self.create_collection_name(project_id=project.project_id)
@@ -65,10 +71,10 @@ class NLPController(BaseController):
 
         return True
 
-    def search_vector_db_collection(self, project: ProjectSchema, text: str, limit: int = 5):
+    async def search_vector_db_collection(self, project: ProjectSchema, text: str, limit: int = 5):
 
         # step1: get collection name
-        collection_name = self.create_collection_name(project_id=project.project_id)
+        collection_names = self.get_search_collection_names(project_id=project.project_id)
 
         # step2: get text embedding vector
         vector = self.embedding_client.embed_text(text=text, 
@@ -78,8 +84,8 @@ class NLPController(BaseController):
             return False
 
         # step3: do semantic search
-        results = self.vectordb_client.search_by_vector(
-            collection_name=collection_name,
+        results = await self.vectordb_client.search_by_vector_multi_collection_async(
+            collection_names=collection_names,
             vector=vector,
             limit=limit
         )
@@ -89,12 +95,12 @@ class NLPController(BaseController):
 
         return results
 
-    def answer_rag_question(self, project: ProjectSchema, query: str, limit: int = 5, chat_history: list = None):
+    async def answer_rag_question(self, project: ProjectSchema, query: str, limit: int = 5, chat_history: list = None):
         
         answer, full_prompt, final_chat_history = None, None, None
 
         # step1: retrieve related documents 
-        retrieved_documents = self.search_vector_db_collection(
+        retrieved_documents = await self.search_vector_db_collection(
             project=project,
             text=query,
             limit=limit

@@ -35,6 +35,11 @@ class Settings(BaseSettings):
     VECTOR_DB_PATH : str
     VECTOR_DB_DISTANCE_METHOD: str = None
 
+    # system reserved collections
+    VECTOR_DB_COLLECTION_PREFIX: str = "collection_"
+    SYSTEM_RESERVED_PROJECT_IDS: List[str] = ["1", "2", "3", "4", "5"]
+    SYSTEM_ALLOW_RESERVED_WRITES: bool = False
+
     
     # default system propmt language
     PRIMARY_LANGUAGE:str = "en"

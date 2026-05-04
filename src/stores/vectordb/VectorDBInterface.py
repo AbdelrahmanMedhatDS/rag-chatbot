@@ -49,4 +49,16 @@ class VectorDBInterface(ABC):
     @abstractmethod
     def search_by_vector(self, collection_name: str, vector: list, limit: int) -> List[RetrievedDocumentSchema]:
         pass
+
+    @abstractmethod
+    def search_by_vector_multi_collection(self, collection_names: List[str], vector: list, limit: int) -> List[RetrievedDocumentSchema]:
+        pass
+
+    @abstractmethod
+    async def search_by_vector_async(self, collection_name: str, vector: list, limit: int) -> List[RetrievedDocumentSchema]:
+        pass
+
+    @abstractmethod
+    async def search_by_vector_multi_collection_async(self, collection_names: List[str], vector: list, limit: int) -> List[RetrievedDocumentSchema]:
+        pass
     
