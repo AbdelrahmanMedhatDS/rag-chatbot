@@ -2,7 +2,7 @@
 
 **Version:** 0.1  
 **Base URL:** `http://localhost:5000/api/v1`  
-**Last Updated:** February 2, 2026
+**Last Updated:** May 4, 2026
 
 ---
 
@@ -15,23 +15,20 @@
 5. [Error Codes](#error-codes)
 6. [Common Workflows](#common-workflows)
 
-
 ---
 
 ## Quick Reference
 
 [check that illustrated image](./images/API_Endpoints_Summary.png)
 
-
-| Endpoint | Method | Purpose | Auth Required |
-|----------|--------|---------|---------------|
-| `/` | GET | Health check | No |
-| `/data/upload/{project_id}` | POST | Upload document | No |
-| `/data/process/{project_id}` | POST | Process document into chunks | No |
-| `/nlp/index/push/{project_id}` | POST | Create vector embeddings | No |
-| `/nlp/index/info/{project_id}` | GET | Get collection statistics | No |
-| `/nlp/index/search/{project_id}` | POST | Semantic search | No |
-
+| Endpoint                         | Method | Purpose                      | Auth Required |
+| -------------------------------- | ------ | ---------------------------- | ------------- |
+| `/`                              | GET    | Health check                 | No            |
+| `/data/upload/{project_id}`      | POST   | Upload document              | No            |
+| `/data/process/{project_id}`     | POST   | Process document into chunks | No            |
+| `/nlp/index/push/{project_id}`   | POST   | Create vector embeddings     | No            |
+| `/nlp/index/info/{project_id}`   | GET    | Get collection statistics    | No            |
+| `/nlp/index/search/{project_id}` | POST   | Semantic search              | No            |
 
 ---
 
@@ -44,11 +41,13 @@
 **Description:** Check if API is running and get version info
 
 **Request:**
+
 ```bash
 curl -X GET "http://localhost:5000/api/v1/"
 ```
 
 **Response:**
+
 ```json
 {
   "app name": "legal-rag-chatbot",
@@ -57,6 +56,7 @@ curl -X GET "http://localhost:5000/api/v1/"
 ```
 
 **Status Codes:**
+
 - `200 OK` - API is running
 
 ---
@@ -70,18 +70,22 @@ curl -X GET "http://localhost:5000/api/v1/"
 **Description:** Upload a PDF or TXT file to a project
 
 **Path Parameters:**
+
 - `project_id` (string, required) - Unique project identifier (alphanumeric)
 
 **Request Body:** `multipart/form-data`
+
 - `file` (file, required) - Document file (PDF or TXT, max 10MB)
 
 **Example:**
+
 ```bash
 curl -X POST "http://localhost:5000/api/v1/data/upload/101" \
   -F "file=@contract.pdf"
 ```
 
 **Success Response:** `200 OK`
+
 ```json
 {
   "signal": "file_upload_success",
@@ -92,13 +96,15 @@ curl -X POST "http://localhost:5000/api/v1/data/upload/101" \
 
 **Error Responses:**
 
-| Status | Signal | Reason |
-|--------|--------|--------|
-| `400` | `file_type_not_supported` | Invalid file type (not PDF/TXT) |
-| `400` | `file_size_exceeded` | File larger than 10MB |
-| `400` | `file_upload_failed` | Server error during upload |
+| Status | Signal                    | Reason                                |
+| ------ | ------------------------- | ------------------------------------- |
+| `400`  | `file_type_not_supported` | Invalid file type (not PDF/TXT)       |
+| `400`  | `file_size_exceeded`      | File larger than 10MB                 |
+| `400`  | `file_upload_failed`      | Server error during upload            |
+| `400`  | `project_id_reserved`     | Reserved project_id (`1` through `5`) |
 
 **Notes:**
+
 - Project is auto-created if it doesn't exist
 - File is saved to `src/assets/files/{project_id}/{file_id}`
 - Returns unique `file_id` for reference
@@ -112,9 +118,11 @@ curl -X POST "http://localhost:5000/api/v1/data/upload/101" \
 **Description:** Extract text and split into searchable chunks
 
 **Path Parameters:**
+
 - `project_id` (string, required) - Project identifier
 
 **Request Body:** `application/json`
+
 ```json
 {
   "file_id": "abc123xyz456_contract.pdf",
@@ -126,14 +134,15 @@ curl -X POST "http://localhost:5000/api/v1/data/upload/101" \
 
 **Parameters:**
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `file_id` | string | No | null | Specific file to process (null = all files) |
-| `chunk_size` | integer | No | 100 | Max characters per chunk (recommended: 1000-1500) |
-| `overlap_size` | integer | No | 20 | Characters overlap between chunks (15-20% of chunk_size) |
-| `do_reset` | integer | No | 0 | 1 = delete existing chunks first, 0 = append |
+| Field          | Type    | Required | Default | Description                                              |
+| -------------- | ------- | -------- | ------- | -------------------------------------------------------- |
+| `file_id`      | string  | No       | null    | Specific file to process (null = all files)              |
+| `chunk_size`   | integer | No       | 100     | Max characters per chunk (recommended: 1000-1500)        |
+| `overlap_size` | integer | No       | 20      | Characters overlap between chunks (15-20% of chunk_size) |
+| `do_reset`     | integer | No       | 0       | 1 = delete existing chunks first, 0 = append             |
 
 **Example:**
+
 ```bash
 curl -X POST "http://localhost:5000/api/v1/data/process/101" \
   -H "Content-Type: application/json" \
@@ -146,6 +155,7 @@ curl -X POST "http://localhost:5000/api/v1/data/process/101" \
 ```
 
 **Success Response:** `200 OK`
+
 ```json
 {
   "signal": "processing_completed",
@@ -156,13 +166,15 @@ curl -X POST "http://localhost:5000/api/v1/data/process/101" \
 
 **Error Responses:**
 
-| Status | Signal | Reason |
-|--------|--------|--------|
-| `400` | `no_file_found_with_this_id` | Invalid file_id |
-| `400` | `not_found_files` | No files in project |
-| `400` | `processing_failed` | Error during text extraction |
+| Status | Signal                       | Reason                                |
+| ------ | ---------------------------- | ------------------------------------- |
+| `400`  | `no_file_found_with_this_id` | Invalid file_id                       |
+| `400`  | `not_found_files`            | No files in project                   |
+| `400`  | `processing_failed`          | Error during text extraction          |
+| `400`  | `project_id_reserved`        | Reserved project_id (`1` through `5`) |
 
 **Notes:**
+
 - Supports PDF and TXT files
 - Chunks stored in MongoDB with metadata (page numbers, source)
 - Use `do_reset=1` to reprocess with different parameters
@@ -178,9 +190,11 @@ curl -X POST "http://localhost:5000/api/v1/data/process/101" \
 **Description:** Convert chunks to vector embeddings and store in Qdrant
 
 **Path Parameters:**
+
 - `project_id` (string, required) - Project identifier
 
 **Request Body:** `application/json`
+
 ```json
 {
   "do_reset": 0
@@ -189,11 +203,12 @@ curl -X POST "http://localhost:5000/api/v1/data/process/101" \
 
 **Parameters:**
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `do_reset` | integer | No | 0 | 1 = delete collection and reindex, 0 = append |
+| Field      | Type    | Required | Default | Description                                   |
+| ---------- | ------- | -------- | ------- | --------------------------------------------- |
+| `do_reset` | integer | No       | 0       | 1 = delete collection and reindex, 0 = append |
 
 **Example:**
+
 ```bash
 curl -X POST "http://localhost:5000/api/v1/nlp/index/push/101" \
   -H "Content-Type: application/json" \
@@ -201,6 +216,7 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/push/101" \
 ```
 
 **Success Response:** `200 OK`
+
 ```json
 {
   "signal": "inserted_into_vectordb_successfully",
@@ -210,18 +226,21 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/push/101" \
 
 **Error Responses:**
 
-| Status | Signal | Reason |
-|--------|--------|--------|
-| `400` | `project_not_found` | Invalid project_id |
-| `400` | `insert_into_vectordb_error` | Embedding API failure or Qdrant error |
+| Status | Signal                       | Reason                                |
+| ------ | ---------------------------- | ------------------------------------- |
+| `400`  | `project_not_found`          | Invalid project_id                    |
+| `400`  | `insert_into_vectordb_error` | Embedding API failure or Qdrant error |
+| `400`  | `project_id_reserved`        | Reserved project_id (`1` through `5`) |
 
 **Notes:**
+
 - Processes chunks in batches of 50
 - Generates embeddings using Cohere (384-dim) or OpenAI (1536-dim)
 - Stores vectors + text + metadata in Qdrant
 - Use `do_reset=1` when changing embedding models
 
 **Processing Time:**
+
 - ~5-10 seconds for 100 chunks
 - ~30-60 seconds for 1000 chunks
 
@@ -234,14 +253,17 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/push/101" \
 **Description:** Get vector collection statistics and health status
 
 **Path Parameters:**
+
 - `project_id` (string, required) - Project identifier
 
 **Example:**
+
 ```bash
 curl -X GET "http://localhost:5000/api/v1/nlp/index/info/101"
 ```
 
 **Success Response:** `200 OK`
+
 ```json
 {
   "signal": "vectordb_collection_retrieved_successfully",
@@ -270,14 +292,15 @@ curl -X GET "http://localhost:5000/api/v1/nlp/index/info/101"
 
 **Key Fields:**
 
-| Field | Description |
-|-------|-------------|
-| `status` | Collection health: "green" (healthy), "yellow" (warning), "red" (error) |
-| `points_count` | **Actual number of vectors** (use this, not vectors_count) |
-| `config.params.vectors.size` | Vector dimensions (384 for Cohere, 1536 for OpenAI) |
-| `config.params.vectors.distance` | Similarity metric (Cosine recommended) |
+| Field                            | Description                                                             |
+| -------------------------------- | ----------------------------------------------------------------------- |
+| `status`                         | Collection health: "green" (healthy), "yellow" (warning), "red" (error) |
+| `points_count`                   | **Actual number of vectors** (use this, not vectors_count)              |
+| `config.params.vectors.size`     | Vector dimensions (384 for Cohere, 1536 for OpenAI)                     |
+| `config.params.vectors.distance` | Similarity metric (Cosine recommended)                                  |
 
 **Use Cases:**
+
 - Verify indexing completed
 - Check collection health before searching
 - Debug indexing issues
@@ -292,9 +315,11 @@ curl -X GET "http://localhost:5000/api/v1/nlp/index/info/101"
 **Description:** Find relevant document chunks using semantic similarity
 
 **Path Parameters:**
+
 - `project_id` (string, required) - Project identifier
 
 **Request Body:** `application/json`
+
 ```json
 {
   "text": "What are the payment terms?",
@@ -304,12 +329,13 @@ curl -X GET "http://localhost:5000/api/v1/nlp/index/info/101"
 
 **Parameters:**
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `text` | string | Yes | - | Search query (natural language) |
-| `limit` | integer | No | 5 | Number of results to return (recommended: 5-10) |
+| Field   | Type    | Required | Default | Description                                     |
+| ------- | ------- | -------- | ------- | ----------------------------------------------- |
+| `text`  | string  | Yes      | -       | Search query (natural language)                 |
+| `limit` | integer | No       | 5       | Number of results to return (recommended: 5-10) |
 
 **Example:**
+
 ```bash
 curl -X POST "http://localhost:5000/api/v1/nlp/index/search/101" \
   -H "Content-Type: application/json" \
@@ -320,6 +346,7 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/search/101" \
 ```
 
 **Success Response:** `200 OK`
+
 ```json
 {
   "signal": "vectordb_search_successfully",
@@ -344,24 +371,26 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/search/101" \
 
 **Score Interpretation:**
 
-| Score Range | Relevance |
-|-------------|-----------|
-| 0.9 - 1.0 | Extremely similar |
-| 0.8 - 0.9 | Highly relevant |
-| 0.7 - 0.8 | Relevant |
-| 0.6 - 0.7 | Moderately relevant |
-| < 0.6 | Weakly relevant |
+| Score Range | Relevance           |
+| ----------- | ------------------- |
+| 0.9 - 1.0   | Extremely similar   |
+| 0.8 - 0.9   | Highly relevant     |
+| 0.7 - 0.8   | Relevant            |
+| 0.6 - 0.7   | Moderately relevant |
+| < 0.6       | Weakly relevant     |
 
 **Error Responses:**
 
-| Status | Signal | Reason |
-|--------|--------|--------|
-| `400` | `vectordb_search_error` | Collection not indexed, embedding API failure, or empty query |
+| Status | Signal                  | Reason                                                        |
+| ------ | ----------------------- | ------------------------------------------------------------- |
+| `400`  | `vectordb_search_error` | Collection not indexed, embedding API failure, or empty query |
 
 **Notes:**
+
 - Uses cosine similarity for ranking
 - Returns text and metadata in payload (no MongoDB query needed)
 - Query is converted to vector using same embedding model as indexing
+- Searches system collections `collection_1` through `collection_5` in addition to the user project collection
 
 **Response Time:** 100-300ms typical
 
@@ -374,9 +403,11 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/search/101" \
 **Description:** Get AI-generated answers based on document content (RAG)
 
 **Path Parameters:**
+
 - `project_id` (string, required) - Project identifier
 
 **Request Body:** `application/json`
+
 ```json
 {
   "text": "What are the payment terms in the contract?",
@@ -386,12 +417,13 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/search/101" \
 
 **Parameters:**
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `text` | string | Yes | - | Question to answer |
-| `limit` | integer | No | 5 | Number of context chunks to retrieve (5-10 recommended) |
+| Field   | Type    | Required | Default | Description                                             |
+| ------- | ------- | -------- | ------- | ------------------------------------------------------- |
+| `text`  | string  | Yes      | -       | Question to answer                                      |
+| `limit` | integer | No       | 5       | Number of context chunks to retrieve (5-10 recommended) |
 
 **Example:**
+
 ```bash
 curl -X POST "http://localhost:5000/api/v1/nlp/index/answer/101" \
   -H "Content-Type: application/json" \
@@ -402,6 +434,7 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/answer/101" \
 ```
 
 **Success Response:** `200 OK`
+
 ```json
 {
   "signal": "rag_answer_successfully",
@@ -418,11 +451,12 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/answer/101" \
 
 **Error Responses:**
 
-| Status | Signal | Reason |
-|--------|--------|--------|
-| `400` | `rag_answer_error` | No relevant documents, LLM API failure, or template parser not configured |
+| Status | Signal             | Reason                                                                    |
+| ------ | ------------------ | ------------------------------------------------------------------------- |
+| `400`  | `rag_answer_error` | No relevant documents, LLM API failure, or template parser not configured |
 
 **Notes:**
+
 - Combines semantic search + LLM generation
 - Uses GPT-3.5-turbo (OpenAI) or Command (Cohere)
 - Temperature: 0.1 (low randomness for factual accuracy)
@@ -437,17 +471,18 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/answer/101" \
 
 ### HTTP Status Codes
 
-| Code | Meaning | When It Occurs |
-|------|---------|----------------|
-| `200` | OK | Request successful |
-| `400` | Bad Request | Invalid parameters, validation error, or business logic error |
-| `500` | Internal Server Error | Unexpected server error |
+| Code  | Meaning               | When It Occurs                                                |
+| ----- | --------------------- | ------------------------------------------------------------- |
+| `200` | OK                    | Request successful                                            |
+| `400` | Bad Request           | Invalid parameters, validation error, or business logic error |
+| `500` | Internal Server Error | Unexpected server error                                       |
 
 ### Signal Values
 
 All responses include a `signal` field indicating the operation result:
 
 **Success Signals:**
+
 - `file_upload_success`
 - `processing_completed`
 - `inserted_into_vectordb_successfully`
@@ -456,6 +491,7 @@ All responses include a `signal` field indicating the operation result:
 - `rag_answer_successfully`
 
 **Error Signals:**
+
 - `file_type_not_supported`
 - `file_size_exceeded`
 - `file_upload_failed`
@@ -463,6 +499,7 @@ All responses include a `signal` field indicating the operation result:
 - `not_found_files`
 - `processing_failed`
 - `project_not_found`
+- `project_id_reserved`
 - `insert_into_vectordb_error`
 - `vectordb_search_error`
 - `rag_answer_error`
@@ -572,7 +609,9 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/answer/101" \
 ## Troubleshooting
 
 ### Issue: "file_upload_failed"
+
 **Check:**
+
 - Disk space available
 - File permissions on `src/assets/files/`
 - File size < 10MB
@@ -580,7 +619,9 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/answer/101" \
 ---
 
 ### Issue: "processing_failed"
+
 **Check:**
+
 - File is valid PDF/TXT (not corrupted)
 - File contains extractable text (not scanned images)
 - MongoDB connection is active
@@ -588,7 +629,9 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/answer/101" \
 ---
 
 ### Issue: "insert_into_vectordb_error"
+
 **Check:**
+
 - API keys are valid (COHERE_API_KEY or OPENAI_API_KEY)
 - Network connectivity to embedding API
 - Qdrant database path is writable
@@ -597,7 +640,9 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/answer/101" \
 ---
 
 ### Issue: "vectordb_search_error"
+
 **Check:**
+
 - Collection is indexed (check `/nlp/index/info/{project_id}`)
 - `points_count > 0` in collection info
 - Embedding API is accessible
@@ -605,15 +650,17 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/answer/101" \
 ---
 
 ### Issue: inserted_items_count ≠ points_count
+
 **Cause:** Bug in pagination (fixed in latest version)
 **Solution:** Re-index with `do_reset=1`
 
 ---
 
 ### Issue: "rag_answer_error"
+
 **Check:**
+
 - Collection has vectors (`points_count > 0`)
 - LLM API key is valid
 - Template parser is configured (known limitation)
 - Query is not empty
-
