@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, UploadFile, status, Request
 from fastapi.responses import JSONResponse
 from controllers import ProcessController
 from helpers import get_settings, Settings
+from helpers.collections import is_reserved_project_id, allow_reserved_writes, get_system_reserved_project_ids
 from controllers import DataController, ProjectController
 from enums import ResponseSignal, AssetTypeEnum
 import aiofiles # async file handling lib
@@ -21,6 +22,21 @@ data_router = APIRouter(
 @data_router.post("/upload/{project_id}")
 async def upload_data(request:Request, project_id:str, file:UploadFile, 
                       app_settings:Settings=Depends(get_settings)):
+
+    if is_reserved_project_id(project_id):
+        if allow_reserved_writes():
+            logger.warning(f"Reserved project_id write allowed on upload: {project_id}")
+        else:
+            return JSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={
+                    "signal": ResponseSignal.PROJECT_ID_RESERVED.value,
+                    "details": {
+                        "message": "project_id is reserved for system collections",
+                        "reserved_project_ids": get_system_reserved_project_ids()
+                    }
+                }
+            )
     
     db_client = request.app.db_client
     project_model = await ProjectModel.create_instance(db_client=db_client)
@@ -89,6 +105,21 @@ async def upload_data(request:Request, project_id:str, file:UploadFile,
 
 @data_router.post("/process/{project_id}")
 async def process_endpoint(request: Request, project_id:str, process_request:ProcessRequest):
+
+    if is_reserved_project_id(project_id):
+        if allow_reserved_writes():
+            logger.warning(f"Reserved project_id write allowed on process: {project_id}")
+        else:
+            return JSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={
+                    "signal": ResponseSignal.PROJECT_ID_RESERVED.value,
+                    "details": {
+                        "message": "project_id is reserved for system collections",
+                        "reserved_project_ids": get_system_reserved_project_ids()
+                    }
+                }
+            )
     
     file_id=process_request.file_id
     chunk_size=process_request.chunk_size
