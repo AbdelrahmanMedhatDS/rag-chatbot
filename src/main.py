@@ -3,6 +3,7 @@ from routes import base_router, data_router, nlp_router
 from contextlib import asynccontextmanager
 from motor.motor_asyncio import AsyncIOMotorClient # type: ignore
 from helpers.config import get_settings
+from helpers.collections import get_system_reserved_project_ids, build_collection_name
 from stores.llm.LLMProviderFactory import LLMProviderFactory
 from stores.vectordb.VectorDBProviderFactory import VectorDBProviderFactory
 from stores.llm.templates import TemplateParser
@@ -31,6 +32,14 @@ async def lifespan(app: FastAPI):
     app.vectordb_client = vectordb_provider_factory.create(provider=settings.VECTOR_DB_BACKEND)
     app.vectordb_client.connect()
     logger.info(f"INFO:     VectorDB client for {settings.VECTOR_DB_BACKEND} initialized")
+
+    async def validate_system_collections():
+        for collection_id in get_system_reserved_project_ids():
+            collection_name = build_collection_name(collection_id)
+            if not app.vectordb_client.is_collection_existed(collection_name=collection_name):
+                logger.warning(f"System collection not found: {collection_name}")
+
+    await validate_system_collections()
 
     # Transformers' (clients) 
     llm_provider_factory = LLMProviderFactory(settings)
