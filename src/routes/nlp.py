@@ -3,11 +3,14 @@ from fastapi.responses import JSONResponse
 from schemas import PushRequest, SearchRequest, RetrievedDocumentSchema
 from models import ProjectModel
 from models import ChunkModel
+from models import ConversationModel
 from controllers import NLPController
 from enums import ResponseSignal
 from helpers.collections import is_reserved_project_id, allow_reserved_writes, get_system_reserved_project_ids
 
 import logging
+import asyncio
+import uuid
 
 logger = logging.getLogger('uvicorn.error')
 
@@ -64,20 +67,34 @@ async def index_project(request: Request, project_id: str, push_request: PushReq
     has_records = True
     page_no = 1
     inserted_items_count = 0
-    idx = 0
     first_iteration = True  # Track first iteration for do_reset
+    index_only_new = bool(push_request.index_only_new) and not bool(push_request.do_reset)
 
     while has_records:
-        page_chunks = await chunk_model.get_poject_chunks(project_id=project.id, page_no=page_no)
-        if len(page_chunks):
-            page_no += 1
+        if index_only_new:
+            # Atomic fetch-and-lock: no page_no needed because each call
+            # locks the returned chunks, shrinking the unindexed pool.
+            # Stale locks (from crashed runs) auto-expire after 10 min.
+            page_chunks = await chunk_model.get_and_lock_unindexed_chunks(
+                project_id=project.id
+            )
+        else:
+            # Full re-index: use normal pagination with skip
+            page_chunks = await chunk_model.get_poject_chunks(
+                project_id=project.id,
+                page_no=page_no,
+                only_unindexed=False
+            )
         
         if not page_chunks or len(page_chunks) == 0:
             has_records = False
             break
 
-        chunks_ids =  list(range(idx, idx + len(page_chunks)))
-        idx += len(page_chunks)
+        chunk_object_ids = [chunk.id for chunk in page_chunks if chunk.id]
+        chunks_ids = [
+            str(uuid.uuid5(uuid.NAMESPACE_OID, str(chunk_id)))
+            for chunk_id in chunk_object_ids
+        ]
         
         # Only apply do_reset on the first iteration to avoid deleting previously inserted vectors
         should_reset = push_request.do_reset and first_iteration
@@ -92,6 +109,8 @@ async def index_project(request: Request, project_id: str, push_request: PushReq
         first_iteration = False  # Set to False after first iteration
 
         if not is_inserted:
+            # Rollback: clear both indexed flag AND processing lock
+            await chunk_model.mark_chunks_unindexed(chunk_ids=chunk_object_ids)
             return JSONResponse(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 content={
@@ -99,7 +118,16 @@ async def index_project(request: Request, project_id: str, push_request: PushReq
                 }
             )
         
+        # Mark chunks as indexed AFTER successful vector DB insertion
+        # (for index_only_new this also clears the processing lock)
+        await chunk_model.mark_chunks_indexed(chunk_ids=chunk_object_ids)
+        
         inserted_items_count += len(page_chunks)
+        
+        # Only increment page_no for full re-index (stable dataset with skip).
+        # For index_only_new, the pool shrinks naturally — no skip needed.
+        if not index_only_new:
+            page_no += 1
         
     return JSONResponse(
         content={
@@ -176,41 +204,85 @@ async def search_index(request: Request, project_id: str, search_request: Search
 @nlp_router.post("/index/answer/{project_id}")
 async def search_index(request: Request, project_id: str, search_request: SearchRequest):
     
-    project_model = await ProjectModel.create_instance(
-        db_client=request.app.db_client
-    )
+    try:
+        project_model = await ProjectModel.create_instance(
+            db_client=request.app.db_client
+        )
 
-    project = await project_model.get_project_from_db_or_insert_one(
-        project_id=project_id
-    )
+        project = await project_model.get_project_from_db_or_insert_one(
+            project_id=project_id
+        )
 
-    nlp_controller = NLPController(
-        vectordb_client=request.app.vectordb_client,
-        generation_client=request.app.generation_client,
-        embedding_client=request.app.embedding_client,
-        template_parser=request.app.template_parser
-    )
+        nlp_controller = NLPController(
+            vectordb_client=request.app.vectordb_client,
+            generation_client=request.app.generation_client,
+            embedding_client=request.app.embedding_client,
+            template_parser=request.app.template_parser
+        )
 
-    answer, full_prompt, chat_history = await nlp_controller.answer_rag_question(
-        project=project,
-        query= search_request.text,
-        limit= search_request.limit,
-        chat_history=search_request.chat_history  # Pass the chat_history from client
-    )
-
-    if not answer:
-        return JSONResponse(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                content={
-                    "signal": ResponseSignal.RAG_ANSWER_ERROR.value
-                }
+        conversation_model = None
+        if search_request.use_memory and search_request.user_id and search_request.conversation_id:
+            conversation_model = await ConversationModel.create_instance(
+                db_client=request.app.db_client
             )
 
-    return JSONResponse(
-        content={
+        answer, full_prompt, chat_history, conversation = await nlp_controller.answer_rag_question(
+            project=project,
+            query= search_request.text,
+            limit= search_request.limit,
+            chat_history=search_request.chat_history,
+            conversation_model=conversation_model,
+            conversation_id=search_request.conversation_id,
+            user_id=search_request.user_id,
+            use_memory=search_request.use_memory,
+            enable_query_rewrite=search_request.enable_query_rewrite
+        )
+
+        if not answer:
+            return JSONResponse(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    content={
+                        "signal": ResponseSignal.RAG_ANSWER_ERROR.value
+                    }
+                )
+
+        if conversation_model and conversation:
+            if conversation.title is None or str(conversation.title).strip() == "":
+
+                async def _generate_title():
+                    try:
+                        title = nlp_controller.conversation_controller.generate_conversation_title(query=search_request.text)
+                        if title:
+                            await conversation_model.set_title_if_missing(
+                                project_id=project_id,
+                                user_id=search_request.user_id,
+                                conversation_id=conversation.conversation_id,
+                                title=title
+                            )
+                    except Exception as e:
+                        logger.error(f"Title generation failed: {e}", exc_info=True)
+
+                asyncio.create_task(_generate_title())
+
+        response_payload = {
             "signal": ResponseSignal.RAG_ANSWER_SUCCESS.value,
             "answer": answer,
-            "full_prompt" :full_prompt,
-            "chat_history" :chat_history,
+            "full_prompt": full_prompt,
+            "chat_history": chat_history,
         }
-    )
+
+        if conversation:
+            response_payload["conversation_id"] = conversation.conversation_id
+            response_payload["conversation_title"] = conversation.title
+
+        return JSONResponse(content=response_payload)
+
+    except Exception as e:
+        logger.error(f"answer_rag_question endpoint failed: {e}", exc_info=True)
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={
+                "signal": ResponseSignal.RAG_ANSWER_ERROR.value,
+                "error": str(e),
+            }
+        )

@@ -1,5 +1,5 @@
 from fastapi import FastAPI # type: ignore
-from routes import base_router, data_router, nlp_router 
+from routes import base_router, data_router, nlp_router, conversation_router, vectors_router
 from contextlib import asynccontextmanager
 from motor.motor_asyncio import AsyncIOMotorClient # type: ignore
 from helpers.config import get_settings
@@ -77,3 +77,5 @@ setup_metrics(app) # Set up Prometheus metrics and endpoint
 app.include_router(base_router)
 app.include_router(data_router)
 app.include_router(nlp_router)
+app.include_router(conversation_router)
+app.include_router(vectors_router)
