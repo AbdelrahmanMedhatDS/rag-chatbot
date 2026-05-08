@@ -4,7 +4,7 @@ from ..VectorDBEnums import DistanceMethodEnums
 import logging
 import asyncio
 from schemas import RetrievedDocumentSchema
-from typing import List
+from typing import List, Optional, Any, Tuple
 
 class QdrantDBProvider(VectorDBInterface):
 
@@ -216,3 +216,29 @@ class QdrantDBProvider(VectorDBInterface):
 
         all_results.sort(key=lambda item: item.score, reverse=True)
         return all_results[:limit]
+
+    def scroll_collection(
+        self,
+        collection_name: str,
+        limit: int = 50,
+        offset: Optional[Any] = None,
+        with_payload: bool = True,
+        with_vectors: bool = False,
+    ) -> Tuple[List[models.Record], Optional[Any]]:
+        if not self.is_collection_existed(collection_name=collection_name):
+            self.logger.warning(f"Collection not found: {collection_name}")
+            return [], None
+
+        try:
+            points, next_offset = self.client.scroll(
+                collection_name=collection_name,
+                limit=limit,
+                offset=offset,
+                with_payload=with_payload,
+                with_vectors=with_vectors,
+            )
+        except Exception as e:
+            self.logger.error(f"Error while scrolling collection {collection_name}: {e}")
+            return [], None
+
+        return points, next_offset

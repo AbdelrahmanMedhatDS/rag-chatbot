@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional, Any
 from schemas import RetrievedDocumentSchema
 
 class VectorDBInterface(ABC):
@@ -60,5 +60,16 @@ class VectorDBInterface(ABC):
 
     @abstractmethod
     async def search_by_vector_multi_collection_async(self, collection_names: List[str], vector: list, limit: int) -> List[RetrievedDocumentSchema]:
+        pass
+
+    @abstractmethod
+    def scroll_collection(
+        self,
+        collection_name: str,
+        limit: int = 50,
+        offset: Optional[Any] = None,
+        with_payload: bool = True,
+        with_vectors: bool = False,
+    ):
         pass
     
