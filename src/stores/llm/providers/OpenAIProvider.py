@@ -2,6 +2,7 @@ from ..LLMInterface import LLMInterface
 from ..LLMEnums import OpenAIEnums
 from openai import OpenAI # type: ignore
 import logging
+import time
 
 class OpenAIProvider(LLMInterface):
 
@@ -41,7 +42,7 @@ class OpenAIProvider(LLMInterface):
     def process_text(self, text: str):
         return text[:self.default_input_max_characters].strip()
 
-    def generate_text(self, prompt: str, chat_history: list=[], max_output_tokens: int=None,
+    def generate_text(self, prompt: str, chat_history: list=None, max_output_tokens: int=None,
                             temperature: float = None):
         
         if not self.client:
@@ -55,6 +56,7 @@ class OpenAIProvider(LLMInterface):
         max_output_tokens = max_output_tokens if max_output_tokens else self.default_generation_max_output_tokens
         temperature = temperature if temperature else self.default_generation_temperature
 
+        chat_history = list(chat_history) if chat_history else []
         chat_history.append(
             self.construct_prompt(prompt=prompt, role=OpenAIEnums.USER.value)
         )
@@ -93,6 +95,59 @@ class OpenAIProvider(LLMInterface):
             return None
 
         return response.data[0].embedding
+
+    def embed_texts(self, texts: list, document_type: str = None,
+                    batch_size: int = 40, max_retries: int = 3):
+        
+        if not self.client:
+            self.logger.error("OpenAI client was not set")
+            return None
+
+        if not self.embedding_model_id:
+            self.logger.error("Embedding model for OpenAI was not set")
+            return None
+
+        all_embeddings = [None] * len(texts)  # Pre-allocate to preserve order
+
+        for i in range(0, len(texts), batch_size):
+            batch = texts[i:i + batch_size]
+            batch_start = i
+
+            for attempt in range(1, max_retries + 1):
+                try:
+                    response = self.client.embeddings.create(
+                        model=self.embedding_model_id,
+                        input=batch,
+                    )
+
+                    if not response or not response.data:
+                        self.logger.error(f"Empty response on batch {i // batch_size + 1}")
+                        if attempt < max_retries:
+                            time.sleep(2 ** attempt)  # Exponential backoff
+                            continue
+                        return None
+
+                    # Sort by index to guarantee order matches input order
+                    sorted_data = sorted(response.data, key=lambda x: x.index)
+                    for j, item in enumerate(sorted_data):
+                        all_embeddings[batch_start + j] = item.embedding
+                    break  # Success — exit retry loop
+
+                except Exception as e:
+                    self.logger.error(
+                        f"Batch {i // batch_size + 1} attempt {attempt}/{max_retries} failed: {e}"
+                    )
+                    if attempt < max_retries:
+                        time.sleep(2 ** attempt)  # Exponential backoff: 2s, 4s, 8s
+                        continue
+                    return None  # All retries exhausted
+
+        # Final validation: ensure no gaps
+        if any(v is None for v in all_embeddings):
+            self.logger.error("Some embeddings are missing after batch processing")
+            return None
+
+        return all_embeddings
 
     def construct_prompt(self, prompt: str, role: str):
         return {
