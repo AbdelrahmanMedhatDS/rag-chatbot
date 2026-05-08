@@ -43,15 +43,17 @@ None
 
 ```json
 {
-  "do_reset": 0
+  "do_reset": 0,
+  "index_only_new": true
 }
 ```
 
 #### Request Fields
 
-| Field      | Type    | Required | Default | Description                                                                                         |
-| ---------- | ------- | -------- | ------- | --------------------------------------------------------------------------------------------------- |
-| `do_reset` | integer | No       | 0       | If 1, deletes the existing vector collection before indexing. If 0, appends to existing collection. |
+| Field            | Type    | Required | Default | Description                                                                                                      |
+| ---------------- | ------- | -------- | ------- | -------------------------------------------------------------------------------------------------------- |
+| `do_reset`       | integer | No       | 0       | If 1, deletes the existing vector collection before indexing. If 0, appends to existing collection.    |
+| `index_only_new` | boolean | No       | true    | If true, only chunks not yet indexed are embedded and pushed. Ignored when `do_reset=1`.               |
 
 #### Parameter Details
 
@@ -64,6 +66,11 @@ None
   - Corrupted vector data
   - Want to remove old vectors
   - Testing different configurations
+
+**index_only_new**
+
+- `true`: Only chunks with `chunk_is_indexed=false` (or missing) are embedded and inserted
+- `false`: All chunks are embedded and inserted (can be slow; use with `do_reset=1` for a clean rebuild)
 
 ## Response
 
@@ -157,22 +164,21 @@ The system processes chunks in pages to manage memory efficiently:
 has_records = True
 page_no = 1
 inserted_items_count = 0
-idx = 0  # Global chunk ID counter
 
 while has_records:
     # Retrieve page of chunks (50 chunks per page)
     page_chunks = await ChunkModel.get_poject_chunks(
-        project_id=project.id,
-        page_no=page_no
+      project_id=project.id,
+      page_no=page_no,
+      only_unindexed=index_only_new
     )
 
     if not page_chunks or len(page_chunks) == 0:
         has_records = False
         break
 
-    # Generate sequential IDs for this page
-    chunks_ids = list(range(idx, idx + len(page_chunks)))
-    idx += len(page_chunks)
+    # Generate deterministic IDs for this page
+    chunks_ids = [uuid.uuid5(uuid.NAMESPACE_OID, str(chunk.id)) for chunk in page_chunks]
 
     # Index this page of chunks
     is_inserted = nlp_controller.index_into_vector_db(

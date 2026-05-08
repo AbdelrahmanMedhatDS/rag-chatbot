@@ -2,7 +2,7 @@
 
 **Version:** 0.1  
 **Base URL:** `http://localhost:5000/api/v1`  
-**Last Updated:** May 4, 2026
+**Last Updated:** May 5, 2026
 
 ---
 
@@ -21,14 +21,22 @@
 
 [check that illustrated image](./images/API_Endpoints_Summary.png)
 
-| Endpoint                         | Method | Purpose                      | Auth Required |
-| -------------------------------- | ------ | ---------------------------- | ------------- |
-| `/`                              | GET    | Health check                 | No            |
-| `/data/upload/{project_id}`      | POST   | Upload document              | No            |
-| `/data/process/{project_id}`     | POST   | Process document into chunks | No            |
-| `/nlp/index/push/{project_id}`   | POST   | Create vector embeddings     | No            |
-| `/nlp/index/info/{project_id}`   | GET    | Get collection statistics    | No            |
-| `/nlp/index/search/{project_id}` | POST   | Semantic search              | No            |
+| Endpoint                                            | Method | Purpose                         | Auth Required |
+| --------------------------------------------------- | ------ | ------------------------------- | ------------- |
+| `/`                                                 | GET    | Health check                    | No            |
+| `/data/upload/{project_id}`                         | POST   | Upload document                 | No            |
+| `/data/process/{project_id}`                        | POST   | Process document into chunks    | No            |
+| `/nlp/index/push/{project_id}`                      | POST   | Create vector embeddings        | No            |
+| `/nlp/index/info/{project_id}`                      | GET    | Get collection statistics       | No            |
+| `/nlp/index/search/{project_id}`                    | POST   | Semantic search                 | No            |
+| `/nlp/index/answer/{project_id}`                    | POST   | RAG answer (memory optional)    | No            |
+| `/vectors/inspect/{collection_name}`                | POST   | Inspect vectors in collection   | No            |
+| `/vectors/duplicates/{collection_name}`             | POST   | Detect duplicate vectors (text) | No            |
+| `/vectors/collections`                              | GET    | List Qdrant collections + stats | No            |
+| `/nlp/conversations/{project_id}`                   | POST   | Create conversation             | No            |
+| `/nlp/conversations/{project_id}/list`              | POST   | List conversations              | No            |
+| `/nlp/conversations/{project_id}/{conversation_id}` | GET    | Get conversation                | No            |
+| `/nlp/conversations/{project_id}/{conversation_id}` | DELETE | Delete conversation             | No            |
 
 ---
 
@@ -396,11 +404,11 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/search/101" \
 
 ---
 
-### 6. RAG Question Answering
+### 6. RAG Question Answering (Memory Optional)
 
 **Endpoint:** `POST /nlp/index/answer/{project_id}`
 
-**Description:** Get AI-generated answers based on document content (RAG)
+**Description:** Get AI-generated answers based on document content (RAG). Optional chat memory is stored in MongoDB and used for query rewriting and response generation.
 
 **Path Parameters:**
 
@@ -411,16 +419,25 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/search/101" \
 ```json
 {
   "text": "What are the payment terms in the contract?",
-  "limit": 5
+  "limit": 5,
+  "conversation_id": "conv_123",
+  "user_id": "user_42",
+  "use_memory": true,
+  "enable_query_rewrite": true
 }
 ```
 
 **Parameters:**
 
-| Field   | Type    | Required | Default | Description                                             |
-| ------- | ------- | -------- | ------- | ------------------------------------------------------- |
-| `text`  | string  | Yes      | -       | Question to answer                                      |
-| `limit` | integer | No       | 5       | Number of context chunks to retrieve (5-10 recommended) |
+| Field                  | Type    | Required | Default | Description                                                                |
+| ---------------------- | ------- | -------- | ------- | -------------------------------------------------------------------------- |
+| `text`                 | string  | Yes      | -       | Question to answer                                                         |
+| `limit`                | integer | No       | 5       | Number of context chunks to retrieve (5-10 recommended)                    |
+| `conversation_id`      | string  | No       | null    | Conversation identifier for memory                                         |
+| `user_id`              | string  | No       | null    | User identifier for memory                                                 |
+| `use_memory`           | boolean | No       | true    | Enable server-side conversation memory                                     |
+| `enable_query_rewrite` | boolean | No       | true    | Rewrite query for vector search using history                              |
+| `chat_history`         | array   | No       | null    | Client-provided history (used when memory is disabled or for initial seed) |
 
 **Example:**
 
@@ -429,7 +446,11 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/answer/101" \
   -H "Content-Type: application/json" \
   -d '{
     "text": "What are the payment terms?",
-    "limit": 5
+    "limit": 5,
+    "conversation_id": "conv_123",
+    "user_id": "user_42",
+    "use_memory": true,
+    "enable_query_rewrite": true
   }'
 ```
 
@@ -438,14 +459,20 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/answer/101" \
 ```json
 {
   "signal": "rag_answer_successfully",
-  "answer": "Based on the contract, payment terms are as follows: The Client shall pay the Service Provider within 30 days of invoice date. Late payments will incur a 2% monthly interest charge. Payment shall be made via wire transfer to the account specified in Appendix A.",
+  "answer": "Based on the contract, payment terms are as follows...",
   "full_prompt": "Document 1:\nArticle 5: Payment Terms...\n\nDocument 2:\nPayment shall be made...\n\nPlease answer: What are the payment terms?",
   "chat_history": [
     {
       "role": "system",
-      "text": "You are a helpful legal assistant..."
+      "content": "You are an assistant to generate a response for the user."
+    },
+    {
+      "role": "user",
+      "content": "What are the payment terms?"
     }
-  ]
+  ],
+  "conversation_id": "conv_123",
+  "conversation_title": "Payment terms overview"
 }
 ```
 
@@ -458,12 +485,48 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/answer/101" \
 **Notes:**
 
 - Combines semantic search + LLM generation
-- Uses GPT-3.5-turbo (OpenAI) or Command (Cohere)
-- Temperature: 0.1 (low randomness for factual accuracy)
-- Max tokens: 200 (configurable)
-- **Current Limitation:** Template parser not implemented (may need hardcoded prompts)
+- Query rewriting is used for retrieval only; the final answer uses the original query and history
+- Memory is enabled only when `conversation_id` and `user_id` are provided
+- Chat history is trimmed to fit the context budget alongside RAG chunks
 
 **Response Time:** 1.5-6 seconds typical
+
+---
+
+### 7. Conversations (Create, List, Get, Delete)
+
+**Endpoints:**
+
+- `POST /nlp/conversations/{project_id}` - Create conversation
+- `POST /nlp/conversations/{project_id}/list` - List conversations
+- `GET /nlp/conversations/{project_id}/{conversation_id}?user_id=...` - Get conversation
+- `DELETE /nlp/conversations/{project_id}/{conversation_id}?user_id=...` - Delete conversation
+
+**Create Request Body:**
+
+```json
+{
+  "user_id": "user_42",
+  "conversation_id": "conv_123"
+}
+```
+
+**List Request Body:**
+
+```json
+{
+  "user_id": "user_42",
+  "page": 1,
+  "page_size": 20
+}
+```
+
+**Notes:**
+
+- `conversation_id` is optional in create; server generates one if omitted
+- List endpoint uses POST with request body instead of query parameters
+- Get and delete require `user_id` as a query parameter
+- Conversation messages are appended via the answer endpoint when memory is enabled
 
 ---
 
@@ -489,6 +552,10 @@ All responses include a `signal` field indicating the operation result:
 - `vectordb_collection_retrieved_successfully`
 - `vectordb_search_successfully`
 - `rag_answer_successfully`
+- `conversation_created_successfully`
+- `conversation_list_retrieved_successfully`
+- `conversation_retrieved_successfully`
+- `conversation_deleted_successfully`
 
 **Error Signals:**
 
@@ -503,6 +570,10 @@ All responses include a `signal` field indicating the operation result:
 - `insert_into_vectordb_error`
 - `vectordb_search_error`
 - `rag_answer_error`
+- `conversation_create_error`
+- `conversation_list_error`
+- `conversation_not_found`
+- `conversation_delete_error`
 
 ---
 
@@ -602,6 +673,42 @@ curl -X POST "http://localhost:5000/api/v1/nlp/index/answer/101" \
   -H "Content-Type: application/json" \
   -d '{"text": "What are the payment terms?", "limit": 5}'
 # Returns: Natural language answer
+```
+
+---
+
+### Workflow 5: Conversation Memory
+
+```bash
+# Step 1: Create a conversation (optional, server can also auto-create on first answer)
+curl -X POST "http://localhost:5000/api/v1/nlp/conversations/101" \
+  -H "Content-Type: application/json" \
+  -d '{"user_id": "user_42"}'
+# Response: {"conversation": {"conversation_id": "abc123"}}
+
+# Step 2: Ask a question with memory enabled
+curl -X POST "http://localhost:5000/api/v1/nlp/index/answer/101" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "What are the payment terms?",
+    "limit": 5,
+    "conversation_id": "abc123",
+    "user_id": "user_42",
+    "use_memory": true,
+    "enable_query_rewrite": true
+  }'
+
+# Step 3: Follow up with a pronoun-based question
+curl -X POST "http://localhost:5000/api/v1/nlp/index/answer/101" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "What is its maximum capacity?",
+    "limit": 5,
+    "conversation_id": "abc123",
+    "user_id": "user_42",
+    "use_memory": true,
+    "enable_query_rewrite": true
+  }'
 ```
 
 ---
