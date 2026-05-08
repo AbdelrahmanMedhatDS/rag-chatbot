@@ -6,3 +6,10 @@ class ProcessRequest(BaseModel): # new schema for process endpoint request body 
     chunk_size: Optional[int] = 100
     overlap_size: Optional[int] = 20
     do_reset: Optional[int] = 0
+
+
+class DatasetImportRequest(BaseModel):
+    dataset_path: str
+    chunk_size: Optional[int] = 100
+    overlap_size: Optional[int] = 20
+    do_reset: Optional[int] = 0
