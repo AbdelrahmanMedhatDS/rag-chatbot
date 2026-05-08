@@ -5,7 +5,7 @@ APP_VERSION="0.1"
 # -------------------------------------------------------------
 
 # file
-FILE_VALIDE_TYPES=["text/plain","application/pdf"]
+FILE_VALIDE_TYPES=["text/plain","application/pdf","application/x-ndjson"]
 FILE_MAX_SIZE=10 # 10MB
 MAX_CHUNK_SIZE=512000 # 512KB
 

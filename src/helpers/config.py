@@ -40,6 +40,11 @@ class Settings(BaseSettings):
     SYSTEM_RESERVED_PROJECT_IDS: List[str] = ["1", "2", "3", "4", "5"]
     SYSTEM_ALLOW_RESERVED_WRITES: bool = False
 
+    # chat memory
+    CHAT_HISTORY_MAX_MESSAGES: int = 20
+    CHAT_HISTORY_MAX_CHARS: int = 6000
+    CHAT_CONTEXT_MAX_CHARS: int = 12000
+
     
     # default system propmt language
     PRIMARY_LANGUAGE:str = "en"
