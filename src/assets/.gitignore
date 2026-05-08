@@ -11,3 +11,6 @@ database/qdrant_db/*
 database/qdrant_db/collection/*
 !database/qdrant_db/collection/collection_1/
 !database/qdrant_db/collection/collection_2/
+!database/qdrant_db/collection/collection_3/
+!database/qdrant_db/collection/collection_4/
+!database/qdrant_db/collection/collection_5/

@@ -22,7 +22,7 @@ conda activate rag
 ### (Optional) Setup you command line interface for better readability
 
 ```bash
-PS1="\[\033[01;32m\]\u@\h:\w\n\[\033[00m\]\$ "
+PS1="\[\033[01;32m\]\u@\h:\w\n\[\033[00m\]\$"
 ```
 
 
